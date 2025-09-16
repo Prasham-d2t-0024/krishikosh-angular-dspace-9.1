@@ -1,0 +1,81 @@
+
+.view-button{
+    align-items: center;
+    // background-color: #1f3f5e;
+    // border: 1px solid #1f3f5e;
+    border-radius: 20px;
+    color: #fff;
+    display: flex;
+    padding: 1px 1px 1px 10px;
+    height: 32px;
+    text-shadow: 0 0 0 #fff;
+    font-size: 14px;
+    gap: 4px;
+    line-height: 0.9;
+}
+
+.btn-height{
+    display: flex;
+    justify-content: flex-end;
+    margin: 10px 0;
+    padding: 0 10px;
+    width: 100%;
+}
+
+.iconview{
+        height: 28px;
+    width: 28px;
+    border-radius: 50%;
+    background-color: #fff;
+    color: #1f3f5e;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.card-title{
+    text-transform: capitalize;
+    text-align: center;
+    margin-bottom: 0px!important;
+}
+
+.bottem-count-text ul {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 0;
+    margin: 0;
+}
+
+.bottem-count-text ul li {
+    text-decoration: none;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    justify-content: center;
+    padding: 10px;
+}
+
+.bottem-count-text ul li img {
+    width: 28px !important;
+    margin-right: 4px;
+}
+
+.bottem-count-text ul li span {
+    font-size: var(--ds-font-size-base);
+    font-weight: 600;
+    color: #978f8f;
+    margin-left: 5%;
+}
+
+.font-wight-info {
+    font-weight: 600;
+}
+
+.card {
+    border-color: #fff !important;
+    border-radius: 0px !important;
+}
+
+

@@ -1,0 +1,133 @@
+<div class="container">
+    <div class="row border bg-white p-3 mt-4">
+        <div class="col-lg-6  groupbody">
+            <label class="font-weight-bold ml-3"> Select Date Range</label>
+            <div class="input-group">
+                <div class="col-lg-6 p-0">
+                    <div class="dp-hidden position-absolute">
+                        <div class="input-group">
+                            <input name="datepicker" class="form-control" ngbDatepicker #datepicker="ngbDatepicker" [autoClose]="'outside'"
+                                (dateSelect)="onDateSelection($event,datepicker)" [displayMonths]="2" [dayTemplate]="t" outsideDays="hidden"
+                                [startDate]="fromDate!" tabindex="-1" />
+                            <ng-template #t let-date let-focused="focused">
+                                <span class="custom-day" [class.focused]="focused" [class.range]="isRange(date)"
+                                    [class.faded]="isHovered(date) || isInside(date)" (mouseenter)="hoveredDate = date"
+                                    (mouseleave)="hoveredDate = null">
+                                    {{ date.day }}
+                                </span>
+                            </ng-template>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <input #dpFromDate class="form-control" placeholder="DD/MM/YYYY" name="dpFromDate"
+                            [value]="showDate(formatter.format(fromDate))"
+                            (input)="fromDate = validateInput(fromDate, dpFromDate.value)" />
+                        <button class="btn btn-outline-secondary bi bi-calendar3" (click)="datepicker.toggle()"
+                            type="button"><i class="fas fa-calendar"></i></button>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="input-group">
+                        <input #dpToDate class="form-control" placeholder="DD/MM/YYYY" name="dpToDate"
+                            [value]="showDate(formatter.format(toDate))"
+                            (input)="toDate = validateInput(toDate, dpToDate.value)" />
+                        <button class="btn btn-outline-secondary bi bi-calendar3" (click)="datepicker.toggle()"
+                            type="button"><i class="fas fa-calendar"></i></button>
+                    </div>
+                </div>
+
+
+
+            </div>
+
+        </div>
+        <div class="col-lg-6 p-0">
+            <label class="font-weight-bold ml-1"> Select User</label>
+            <select class="form-control col" id="documenttypeSelect" (change)="selecteduser($event)" name="documenttype"
+                placeholder="">
+                <option value="">Select User</option>
+                @for (user of states; track user.id) {
+                <option value="{{user.id}}">{{user.firstMetadataValue('eperson.firstname') + ' ' +
+                    user.firstMetadataValue('eperson.lastname')}} ({{user.email}})</option>
+                }
+            </select>
+        </div>
+    </div>
+    <div class="row  border bg-white  p-3 mt-4">
+        <div class="col-lg-6 p-0">
+            <label class="font-weight-bold ml-1"> Select Action Type</label>
+            <select class="form-control col" id="actiontype" (change)="selectedaction($event)" name="actiontype"
+                placeholder="">
+                <option value="">Select Action type</option>
+                <option value="0">Login</option>
+                <option value="1"> View</option>
+                <option value="2"> Search</option>
+                <option value="3">Download</option>
+                <option value="4">Create</option>
+                <option value="5">Edit</option>
+                <option value="6">Delete</option>
+            </select>
+        </div>
+        <div class="col-lg-1 mt-4"></div>
+        <div class="col-lg-3 mt-4"><button class="btn btn-primary" (click)="getresult()"
+                style="    width: 150px;">View</button></div>
+        <div class="col-lg-2 mt-4"><button class="btn btn-primary" (click)="downloadEXsl()"
+                style="display: none;   width: 150px;">Download</button></div>
+    </div>
+    <div class="row mt-4">
+        @if (loder) {
+        <ds-loading></ds-loading>
+        }
+        @if ((pageInfoState$ | async)?.totalElements > 0 && !loder) {
+        <ds-pagination  [paginationOptions]="config" class="p-0"
+            (pageChange)="onPageChange($event)"
+            (pageSizeChange)="onPageSizeChange($event)" [collectionSize]="(pageInfoState$ | async)?.totalElements"
+            [hideGear]="false" [hidePagerWhenSinglePage]="true" style="width:100%">
+            <div class="table-responsive mt-3">
+                <table id="epeople" class="table table-striped table-hover table-bordered">
+                    <thead>
+                        <tr>
+                            <th scope="col">Sr.No</th>
+                            <th>Title</th>
+                            <th>Dspace Object</th>
+                            <th scope="col">User Name</th>
+                            <th scope="col">Action </th>
+                            <th scope="col">Action Date</th>
+
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (item1 of (items$ | async)?.page; track item1; let i = $index) {
+                        <tr>
+                            <td>
+                                {{(pageInfoState$ | async)?.elementsPerPage * ((pageInfoState$ |
+                                async)?.currentPage-1)+i+1}}
+                            </td>
+                            <td>{{item1.title}}</td>
+                            <td>{{item1.dspaceObject}}</td>
+                            <td>
+                                @if(!item1.ePersonRest){
+                                <span>Anonymous</span>
+                                }
+                                @if(item1.ePersonRest) {
+                                <span>{{item1.ePersonRest.name}}</span>
+                                }
+                            </td>
+                            <td>{{item1.action}}</td>
+                            <td>{{item1.actionDate | date:'dd/MM/yyyy HH:mm:ss'}}</td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </ds-pagination>
+        }
+        @if((pageInfoState$ | async)?.totalElements == 0 && !loder) {
+        <div class="alert alert-info w-100 mb-2"
+            role="alert">
+            Data not found!
+        </div>
+    }
+    </div>
+</div>

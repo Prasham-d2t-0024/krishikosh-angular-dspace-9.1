@@ -1,0 +1,82 @@
+<div class="col-lg-12 mt-3">
+  <ul ngbNav #nav="ngbNav" [destroyOnHide]="false" (navChange)="onNavChange($event)" class="flex-nowrap mb-2 nav-tabs"
+    [(activeId)]="active">
+    <li [ngbNavItem]="1">
+      <a ngbNavLink class="h6"><i class="fas fa-inbox me-2 fa-lg"></i>{{'mydspace.tabs.submissions' | translate}}</a>
+      <ng-template ngbNavContent>
+        <div class="container">
+          <ds-my-dspace-new-submission *dsShowOnlyForRole="[roleTypeEnum.Submitter]"></ds-my-dspace-new-submission>
+        </div>
+        @if (configuration && context) {
+        <ds-search [configuration]="configuration" [configurationList]="(configurationList$ | async)"
+          [context]="context" [viewModeList]="viewModeList"></ds-search>
+        }
+      </ng-template>
+    </li>
+
+    <li [ngbNavItem]="2">
+      <a ngbNavLink class="h6"><i class="fas fa-bookmark me-2 fa-lg"></i>{{'mydspace.tabs.my_bookmark' | translate}}</a>
+      <ng-template ngbNavContent>
+        <div class="tab-listCard card">
+          <div class="card-header bg-primary text-white">
+            {{'mydspace.bookmarks.your_bookmark' | translate}}
+          </div>
+          <div class="card-body overflow-hidden" style="background-color: #f2f2f2;">
+            <ds-bookmark></ds-bookmark>
+          </div>
+        </div>
+      </ng-template>
+    </li>
+
+    @if(allowCommenting){
+      <li [ngbNavItem]="3">
+        <a ngbNavLink class="h6"><i class="fa fa-comment me-2 fa-lg"></i>{{'mydspace.tabs.comment_moderation' | translate}}</a>
+        <ng-template ngbNavContent>
+          <div class="tab-listCard card">
+            <div class="card-header bg-primary text-white">
+              {{'mydspace.comments.flagged_comment' | translate}}
+            </div>
+            <div class="card-body overflow-hidden" style="background-color: #f2f2f2;">
+              @if(totalCommets > 0) {
+              <div>
+                @if((pageInfoState$ | async)?.totalElements > 0 && !loder) {
+                <ds-pagination [paginationOptions]="config" (pageChange)="onPageChange($event)"
+                  (pageSizeChange)="onPageSizeChange($event)" [collectionSize]="(pageInfoState$ | async)?.totalElements"
+                  [hideGear]="true" [hidePagerWhenSinglePage]="true" [hidePaginationDetail]="true" style="width:100%">
+                    @for (commentobj of (comment$ | async)?.page; track $index) {
+                    <div class="row mt-3">
+                      <div class="col-lg-12 border-top">
+                        <p class="mt-2">{{commentobj.comment}}</p>
+                      </div>
+                      <div class="col-lg-12 text-primary" style=" text-align: right;">
+                        <span>{{commentobj.submitterRest.metadata['eperson.firstname'][0].value+'
+                          '+commentobj.submitterRest.metadata['eperson.lastname'][0].value}}
+                          {{'untypeitem.metadata.added_by'
+                          |
+                          translate}} {{commentobj.actiondate
+                          |
+                          date:'yyyy-MM-dd HH:mm:ss'}} </span> <a style="cursor: pointer;" (click)="commentAction(commentobj, 'unflag')"> |
+                          {{'untypeitem.metadata.unflag_comment' | translate}}</a>
+                    
+                        <a style="cursor: pointer;" (click)="commentAction(commentobj, 'delete')">
+                          | {{'untypeitem.metadata.delete_comment' | translate}}</a>
+                      </div>
+                    </div>
+                    }
+                </ds-pagination>
+                }
+              </div>
+              }
+              @if(totalCommets === 0) {
+              <div>
+                <p class="text-center mb-0">{{'mydspace.comments.no_comments' | translate}}</p>
+              </div>
+              }
+            </div>
+          </div>
+        </ng-template>
+      </li>
+    }
+  </ul>
+  <div [ngbNavOutlet]="nav"></div>
+</div>

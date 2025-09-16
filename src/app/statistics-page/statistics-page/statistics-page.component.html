@@ -1,0 +1,35 @@
+<div class="container-fluid">
+
+  <ng-container *ngVar="(scope$ | async) as scope">
+    @if (scope) {
+      <h3
+        class="header"
+        id="{{ scope.id }}">
+        {{ 'statistics.header' | translate: { scope: getName(scope) } }}
+      </h3>
+    }
+  </ng-container>
+
+  <ng-container *ngVar="reports$ | async as reports">
+
+    @if (!reports) {
+      <ds-loading></ds-loading>
+    }
+
+    @if (reports) {
+      @for (report of reports; track report) {
+        <ds-statistics-table
+          [report]="report"
+          class="m-2 {{ report.id }}">
+        </ds-statistics-table>
+      }
+      @if ((hasData$ | async) !== true) {
+        <div>
+          {{ 'statistics.page.no-data' | translate }}
+        </div>
+      }
+    }
+
+  </ng-container>
+
+</div>

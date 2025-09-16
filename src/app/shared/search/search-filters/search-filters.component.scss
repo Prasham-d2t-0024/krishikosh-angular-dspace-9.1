@@ -1,0 +1,13 @@
+@import '../../../../styles/variables';
+@import '../../../../styles/mixins';
+@import '../../../../styles/Custom.css';
+
+:host ::ng-deep {
+  ngx-skeleton-loader .skeleton-loader {
+    height: var(--ds-filters-skeleton-height);
+    margin-bottom: var(--ds-filters-skeleton-spacing);
+    padding: var(--ds-filters-skeleton-spacing);
+    background-color: var(--bs-light);
+    box-shadow: none;
+  }
+}

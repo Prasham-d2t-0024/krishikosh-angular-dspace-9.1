@@ -1,0 +1,36 @@
+{
+  "bootstrap_colors": {
+    "primary": "#06296f", 
+    "secondary": "#a7936c",
+    "success": "#92c642",
+    "info": "#8e1838",
+    "warning": "#ec9433",
+    "danger": "#cf4444",
+    "light": "#f2f2f2",
+    "dark": "#43515f"
+  },
+  "other_bootstrap": {
+    "link_decoration": "none"
+  },
+  "dspace_custom": {
+    "ds_home_news_link_color": "#D2FC93",
+    "ds_header_navbar_border_bottom_color": "#92c642",
+    "ds_breadcrumb_link_color": "#ded3d3",
+    "ds_breadcrumb_link_active_color": "#ffffff"
+  },
+  "chart_theme": {
+    "trending_items": "air",
+    "trending_searches": "air",
+    "trending_types": "air",
+    "trending_communities": "air",
+    "trending_collections": "air",
+    "item_page_analytics": "air"
+  },
+  "map_theme":{
+    "global_map_theme": ["#a1bdf4", "#5273b5", "#425d94", "#06296f"]
+  },
+  "feature_config":{
+    "allowCommenting":true,
+    "allowRating": true
+  }
+}

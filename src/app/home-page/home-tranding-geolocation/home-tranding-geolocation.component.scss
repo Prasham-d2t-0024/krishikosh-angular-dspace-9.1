@@ -1,0 +1,122 @@
+
+.chart-heading {
+    .title {
+        font-size: 1.3em;
+        color: #636365;
+        font-weight: 400;
+        margin-top: 20px;
+        margin-bottom: 10px;
+    }
+
+    .description {
+        font-size: 0.7em;
+        color: #565656;
+        line-height: 1.2em;
+    }
+}
+.btn-fliter {
+    border: 1px solid #ccc;
+    width: max-content;
+    padding: 5px 0px;
+    border-radius: 7px;
+
+    button {
+        all: unset;
+        cursor: pointer;
+        font-size: 13px;
+        text-transform: capitalize;
+        border: 0px;
+        border-radius: 3px;
+        padding: 2px 5px;
+        margin: 0px 5px;
+        transition: 0.3s ease-in-out all;
+
+        &:hover {
+            background-color: #f0f0f0;
+        }
+    }
+
+    .line {
+        background-color: #ccc;
+        height: 100%;
+        padding: 0px 1px;
+    }
+}
+
+.table-wrapper {
+    height: 261px; /* Set the desired height */
+    overflow-y: auto;
+  }
+
+  /* To align the table headers with the scrollable body */
+  thead th {
+    position: sticky;
+    top: 0;
+    background-color: white; /* Ensures the header has a background */
+    z-index: 1; /* Ensures the header is above the body content */
+  }
+
+  .map-container {
+    // margin-top: 50px;
+  }
+  .geo-table {
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 20px;
+}
+
+.enabledbutton {
+    font-weight: 700!important;
+}
+
+.table-wrapper {
+    height: 222px; /* Set the desired height */
+    overflow-y: auto;
+  }
+
+  /* To align the table headers with the scrollable body */
+  thead th {
+    position: sticky;
+    top: 0;
+    background-color: white; /* Ensures the header has a background */
+    z-index: 1; /* Ensures the header is above the body content */
+  }
+
+  .map-container {
+      // margin-top: 50px;
+  }
+
+  #map {
+      width: 100%;
+      height: 100%;
+  }
+
+  .geo-table {
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      border-radius: 20px;
+  }
+
+.header-title {
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+
+.map-container {
+    height: 400px;  /* Set a height for the map container */
+    // position: relative;  /* Ensure relative positioning for zoom controls */
+    // background-color: #f4f4e8; /* Optional background color */
+}
+
+.map-container .map {
+    width: 100%;
+    height: 90%;
+}
+
+.areaLegend {
+    margin-top: 10px;
+    width: 100%;
+}
+
+.enabledbutton {
+    font-weight: 700!important;
+}
+

@@ -1,0 +1,65 @@
+.tab-section {
+margin: 0px 0px;
+}
+.tab-nav-band {
+    border-bottom: 2px solid rgba(0, 112, 192, 0.3215686275);
+    margin-bottom: 20px;
+}
+button.tablink.current {
+    position: relative;
+    color: #1c1c1c!important;
+    background-color: white!important;
+}
+button.tablink1.current {
+    position: relative;
+    color: #1c1c1c!important;
+    background-color: white!important;
+}
+.tab-nav-band button {
+    border: none;
+    padding: 10px 21px;
+    font-weight: 500;
+    font-size: 18px;
+    background-color: transparent;
+    color: #686868;
+}
+button.tablink.current:before {
+    content: '';
+    width: 100%;
+    height: 7px;
+    background-color: var(--ds-primary-color);
+    position: absolute;
+    bottom: -5px;
+    right: 0;
+    border-radius: 0px;
+}
+button.tablink1.current:before {
+    content: '';
+    width: 100%;
+    height: 7px;
+    background-color: var(--ds-primary-color);
+    position: absolute;
+    bottom: -2px;
+    right: 0;
+    border-radius: 0px;
+}
+a.list-group-item.ng-star-inserted {
+    font-size: 14px;
+    padding: 11px 9px;
+    font-weight: 600;
+}
+
+button.tabsublink.current:before {
+    content: '';
+    width: 100%;
+    height: 7px;
+    background-color: var(--ds-primary-color);
+    position: absolute;
+    bottom: -5px;
+    right: 0;
+    border-radius: 10px;
+}
+button.tabsublink.current {
+    position: relative;
+    color: #1c1c1c;
+}

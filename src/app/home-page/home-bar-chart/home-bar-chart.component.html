@@ -1,0 +1,25 @@
+@if (!!chartOptions && !isLoading) {
+  <ngx-charts-bar-horizontal-2d
+    [scheme]="colorScheme"
+    [schemeType]="schemeType"
+    [results]="chartOptions"
+    [gradient]="gradient"
+    [xAxis]="showXAxis"
+    [yAxis]="showYAxis"
+    [legend]="showLegend"
+    [legendPosition]="legendPosition"
+    [showXAxisLabel]="showXAxisLabel"
+    [showYAxisLabel]="showYAxisLabel"
+    [xAxisLabel]="xAxisLabel"
+    [yAxisLabel]="yAxisLabel"
+    [showGridLines]="false">
+  </ngx-charts-bar-horizontal-2d>
+}
+
+@else if (!!isLoading) {
+  <div class="d-flex justify-content-center align-items-center" style="min-height: 450px;">
+    <div class="spinner-border" role="status">
+      <span class="sr-only">{{'home.label.loading' | translate}}</span>
+    </div>
+  </div>
+}

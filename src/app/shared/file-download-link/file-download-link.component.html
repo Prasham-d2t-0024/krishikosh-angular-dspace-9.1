@@ -1,0 +1,12 @@
+<div class="border-bottom p-1 attachments-details">
+  <a target="_blank" [routerLink]="(bitstreamPath$| async)?.routerLink" class="dont-break-out"
+    [queryParams]="(bitstreamPath$| async)?.queryParams" [target]="isBlank ? '_blank': '_self'" [ngClass]="cssClasses">
+      @if (!(canDownload$ |async)) {
+      <p class="mb-1 pr-1"><i class="fas fa-lock"></i> Request copy</p>
+      }
+    <ng-container *ngTemplateOutlet="content"></ng-container>
+  </a>
+  <ng-template #content>
+    <ng-content></ng-content>
+  </ng-template>
+</div>

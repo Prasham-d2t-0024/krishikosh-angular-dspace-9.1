@@ -1,0 +1,103 @@
+pdf-viewer {
+  display: block;
+  height: 100vh;
+}
+.card-body {
+    -webkit-box-flex: 1;
+    -ms-flex: 1 1 auto;
+    flex: 1 1 auto;
+    padding: 0.25rem;
+}
+.ng-star-inserted{
+    height: 100%;
+}
+.container {
+  border: 1px solid black;
+  display: grid;
+  grid-template-rows: auto calc(100vh - 38.4px); // StackBlitz adds 8px padding to body and 'First div' has a height of 22.4px (8 + 8 + 22.4 = 38.4px).
+}
+.close {
+  font-size: 1.4rem;
+  opacity: 0.1;
+  transition: opacity 0.3s;
+}
+.nav-link:hover > .close {
+  opacity: 0.8;
+}
+.spanclik{
+  cursor: pointer;
+  color: #207698;
+}
+.spanclik:hover {
+  text-decoration: underline;
+}
+.trim-info {
+  max-width: 100%;
+  display: inline-block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;  
+  line-height: 15px;
+  position: relative;
+}
+/*
+new layout css blow
+*/
+.img-css {
+  height: 20px;
+}
+
+.title-css {
+  color: #44b556;
+  border-left: solid;
+  border-color: #44b556;
+  border-width: 5px;
+}
+
+.leftArrow {
+  position: fixed;
+  height: 20vh;
+  z-index: 5;
+  top: 40%;
+  margin-left: 1%;
+}
+
+.rightArrow {
+  position: fixed;
+  height: 20vh;
+  z-index: 5;
+  top: 70%;
+  margin-left: 1%;
+}
+
+.leftFull {
+  position: fixed;
+  height: 50vh;
+  z-index: 5;
+  width: 15px;
+}
+
+.rightFull {
+  right: 0;
+  position: fixed;
+  height: 50vh;
+  z-index: 5;
+  width: 15px;
+}
+
+.example-container {
+  width: 500px;
+  height: 300px;
+  border: 1px solid rgba(0, 0, 0, 0.5);
+}
+
+.example-sidenav-content {
+  display: flex;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+}
+
+.example-sidenav {
+  padding: 20px;
+}

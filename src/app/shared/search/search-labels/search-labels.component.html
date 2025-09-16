@@ -1,0 +1,15 @@
+<div class="labels mt-2">
+  @for (appliedFilter of appliedFilters$ | async; track $index) {
+    <ds-search-label-loader
+      [appliedFilter]="appliedFilter"
+      [inPlaceSearch]="inPlaceSearch">
+    </ds-search-label-loader>
+  }
+  @if(((appliedFilters$ | async) | dsObjectKeys)?.length > 0) {
+  <div style="text-align: right;">
+    <a class="badge badge-secondary" [routerLink]="[searchLink]"
+        [queryParams]="clearParams | async" queryParamsHandling="merge" role="button"><i class="fas fa-undo"></i>
+        {{"search.filters.reset" | translate}}</a>
+  </div>
+  }
+</div>

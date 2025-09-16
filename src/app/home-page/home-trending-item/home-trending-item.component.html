@@ -1,0 +1,117 @@
+<div class="trendy-items">
+  <div class="row align-items-center" style="margin-left: 0px!important;margin-right: 0px!important;">
+    <div class="col-md-6 col-sm-12">
+      <div class="chart-heading">
+        <p class="title">{{'home.label.mostvieweditems' | translate}}</p>
+        <p class="description">{{'home.label.makeyourchoicebyclickingondesiredchoice' | translate}}</p>
+      </div>
+    </div>
+    <div class="col-md-6 col-sm-12 text-md-end">
+      <div class="d-flex align-items-center justify-content-md-end">
+        @if (isAdmin$ | async) {
+        <i class="fa fa-download me-2" style="cursor: pointer;" title="Download Excel" (click)="downloadExcel()"
+          aria-hidden="true">
+        </i>
+        } 
+        <div class="btn-fliter">
+          <button [class]="i === 0 ? 'enabledbutton':''" (click)="buttonClick(0)">{{'home.label.week' |
+            translate}}</button>
+          <span class="line"></span>
+          <button [class]="i === 1 ? 'enabledbutton':''" (click)="buttonClick(1)">{{'home.label.month' |
+            translate}}</button>
+          <span class="line"></span>
+          <button [class]="i === 2 ? 'enabledbutton':''" (click)="buttonClick(2)">{{'home.label.year' |
+            translate}}</button>
+          <span class="line"></span>
+          <button [class]="i === 3 ? 'enabledbutton':''" (click)="buttonClick(3)">{{'home.label.alltime' |
+            translate}}</button>
+        </div>
+        <div>
+          <ng-template #htmlContent>
+            <div>
+              <p>{{'home.label.weekinfo' | translate}}</p>
+              <p>{{'home.label.monthinfo' | translate}}</p>
+              <p>{{'home.label.yearinfo' | translate}}</p>
+              <p>{{'home.label.alltimeinfo' | translate}}</p>
+            </div>
+          </ng-template>
+          <span [ngbTooltip]="htmlContent" class="ms-2"><i class="fas fa-info-circle"></i></span>
+        </div>
+      </div>
+      <div class="chart-heading mt-2">
+        <p class="description">{{'home.label.desireperiod' | translate}}</p>
+      </div>
+    </div>
+    <div class="col-md-6 col-sm-12">
+      <div id="chart">
+        <ds-home-bar-chart [barChartOptions]="barChartOptions" [collectionorCommunityId]="collectionorCommunityId"
+          [type]="type" [dateType]="i"></ds-home-bar-chart>
+      </div>
+    </div>
+    <div class="col-md-6 col-sm-12">
+      <div id="chart-area">
+        <ds-home-line-chart [lineChartdata]="lineChartdata" [collectionorCommunityId]="collectionorCommunityId"
+          [type]="type" [dateType]="i"></ds-home-line-chart>
+      </div>
+    </div>
+  </div>
+  @if (isLoading) {
+  <div class="row d-flex justify-content-center align-items-center" style="min-height: 450px;">
+    <div class="spinner-border" role="status">
+      <span class="sr-only">{{'home.label.loading' | translate}}</span>
+    </div>
+  </div>
+  }
+  @if (!isLoading) {
+  <div class="row align-items-center m-0 mt-5">
+    @for (object of cardData; track $index; let i = $index) {
+    <div class="col-12 mt-2 mb-2">
+      <div class="row m-0" style="border: 1px solid rgba(0, 0, 0, 0.1); border-radius: 5px;">
+        <div class="col-md-8 col-sm-12 d-flex align-items-center borderone">
+          <ds-listable-object-component-loader [object]="object" [viewMode]="viewMode"
+            [index]="i"></ds-listable-object-component-loader>
+        </div>
+        @if (object.viewData) {
+        <div class="col-md-2 col-sm-12 small-chart borderone">
+          <div id="viewschart1" style="margin-top: 70px;max-height: 100px;" [ngClass]="{'for-one':object.viewData.length === 1,'for-two':object.viewData.length === 2,
+            'for-three':object.viewData.length === 3, 'for-four':object.viewData.length === 4}">
+            <ngx-charts-bar-vertical [scheme]="colorScheme" [legend]="false" [showXAxisLabel]="false"
+              [showYAxisLabel]="false" [xAxis]="false" [yAxis]="false" [xAxisLabel]="false" [yAxisLabel]="false"
+              [results]="object.viewData" [legendPosition]="'below'">
+            </ngx-charts-bar-vertical>
+
+          </div>
+          <div class="text-center chart-data">
+            <div><i class="far fa-eye mr-1"></i><span><b>{{object.itemCardData.total_View}}</b>
+                {{'statistics.table.header.views' | translate}}</span></div>
+            <div><span><b>{{object.itemCardData.total_View_item}}</b> {{'home.label.totalviews' | translate}}</span>
+            </div>
+          </div>
+        </div>
+        }
+
+        <div class="col-md-2 col-sm-12">
+          @if (object.downloadData) {
+          <div class="last-chart">
+            <div id="viewschart11" style="margin-top: 35px;max-height: 100px;" [ngClass]="{'for-one':object.downloadData.length === 1,'for-two':object.downloadData.length === 2,
+              'for-three':object.downloadData.length === 3, 'for-four':object.downloadData.length === 4}">
+              <ngx-charts-bar-vertical [scheme]="colorScheme1" [legend]="false" [showXAxisLabel]="false"
+                [showYAxisLabel]="false" [xAxis]="false" [yAxis]="false" [xAxisLabel]="false" [yAxisLabel]="false"
+                [results]="object.downloadData">
+              </ngx-charts-bar-vertical>
+            </div>
+            <div class="text-center chart-data">
+              <div><i class="fas fa-paperclip mr-1"></i><span><b>{{object.itemCardData.total_Downlode}}</b>
+                  {{'home.label.attachmentdownload' | translate}}</span></div>
+              <div><span><b>{{object.itemCardData.total_Downlode_Item}}</b> {{'home.label.totalattachmentdownload' |
+                  translate}}</span></div>
+            </div>
+          </div>
+          }
+        </div>
+      </div>
+    </div>
+    }
+  </div>
+  }
+</div>

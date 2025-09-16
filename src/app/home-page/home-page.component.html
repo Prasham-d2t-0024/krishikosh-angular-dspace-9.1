@@ -1,0 +1,155 @@
+<!-- <ds-home-coar></ds-home-coar>
+<ds-home-news></ds-home-news> -->
+<div class="wrapper">
+  @if(homePageLayoutConfig?.showBanner){
+    <div class="backdrop">
+      <div class="container search-wrapper">
+        <div class="search-bar-wrapper">
+          <div class="row justify-content-center">
+            <div class="col-12 col-md-10">
+              <ds-base-search-form [contenttype]="contenttype" modalDialogClass="search-form" centered="true"
+                [showScopeSelector]="true" [inPlaceSearch]="false"
+                [searchPlaceholder]="'home.search-form.placeholder' | translate">
+              </ds-base-search-form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+  @if(homePageLayoutConfig?.showCarousel) {
+    <div *ngIf="homePageLayoutConfig && homePageLayoutConfig.showCarousel" class="col-12 carousel-resource-cards">
+      <div class="carousel-section">
+        <ngb-carousel>
+          @for (object of dctype; track $index) {
+          <ng-template ngbSlide>
+            <div class="row carouselsection-row px-5 text-primary text-center" style="height: 120px;">
+              @for (filter of object; track $index) {
+              <div [ngClass]="{
+                            'col-lg-2': !(isXsOrSm$ | async),
+                            'col-lg-12': (isXsOrSm$ | async)
+                          }" class="p-3" (click)="gotsearchpage(filter._links.search.href.split('?')[1])">
+  
+                <div class="d-flex flex-column h-100 justify-content-center image-card">
+                  <div class="d-flex align-items-center justify-content-center image-placeholder">
+                    <i [ngClass]="geticon(filter.label)"></i>
+                  </div>
+                  <div class="image-content">
+                    <h5 class="pt-2 ellipsify card-title" [title]="filter.label">
+                      {{ filter.label }}
+                    </h5>
+                    <p class="font-weight-bold ellipsify card-subtitle">
+                      {{ filter.count }}
+                    </p>
+                  </div>
+                </div>
+              </div>
+              }
+            </div>
+          </ng-template>
+          }
+        </ngb-carousel>
+      </div>
+    </div>
+  }
+</div>
+<div class="container-fluid" [class.ps-0]="!visible">
+  <div class="mt-2 tab-section">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-md-12 p-0">
+          <ul ngbNav #nav="ngbNav" class="nav-tabs" style="margin-bottom: 0px!important;">
+            <li ngbNavItem>
+              <a ngbNavLink class="h5">
+                <span>{{'home.page.tab.browsedit' | translate}}</span>
+              </a>
+              <ng-template ngbNavContent>
+                <!-- @if (showDiscoverFilters) {
+              <ds-configuration-search-page [sideBarWidth]="3" [showViewModes]="false" [searchEnabled]="false"
+                [inPlaceSearch]="false" [showScopeSelector]="false">
+                <ng-container searchContentTop *ngTemplateOutlet="homeContent"></ng-container>
+              </ds-configuration-search-page>
+              }
+              @if (!showDiscoverFilters) {
+              <div class="container-fluid">
+                <ng-container *ngTemplateOutlet="homeContent"></ng-container>
+              </div>
+              } -->
+                <!-- <ds-suggestions-popup></ds-suggestions-popup> -->
+
+                <div class="row m-0">
+                  @if ((isXsOrSm$ | async)) {
+                    <div class="col-lg-3 p-0" [ngClass]="{'my_class': !visible}">
+                      <ds-configuration-search-page (closeSidebar1)="toggleSidebar()" (openSidebar1)="toggleSidebar()"
+                      [sideBarWidth]="12" [showViewModes]="false" [searchEnabled]="false" [inPlaceSearch]="false"
+                      [showScopeSelector]="false"></ds-configuration-search-page>
+                    </div>
+                  }
+                  @if (visible) {
+                    <div class="col-lg-9 p-0">
+                      <ds-top-level-community-list></ds-top-level-community-list>
+                      @if (recentSubmissionspageSize>0) {
+                      <ds-recent-item-list></ds-recent-item-list>
+                      }
+                    </div>
+                  }
+                  @if (!(isXsOrSm$ | async)) {
+                  <div class="col-lg-3 col-md-12 p-0">
+                    <ds-configuration-search-page [sideBarWidth]="12" [showViewModes]="false" [searchEnabled]="false"
+                      [inPlaceSearch]="false" [showScopeSelector]="false">
+                    </ds-configuration-search-page>
+                  </div>
+                  }
+                </div>
+
+              </ng-template>
+            </li>
+            <li ngbNavItem>
+              <a ngbNavLink class="h5">
+                <span>{{'home.label.tab.whatstrending' | translate}}</span>
+              </a>
+              <ng-template ngbNavContent>
+
+                <ul ngbNav #nav="ngbNav" class="nav-tabs mt-2">
+                  <li ngbNavItem>
+                    <a ngbNavLink><i class="fas fa-chart-line me-2"></i>{{'home.label.tab.trendingitems' |
+                      translate}}</a>
+                    <ng-template ngbNavContent>
+                      <ds-home-trending-item [collectionorCommunityId]="" type=""></ds-home-trending-item>
+                    </ng-template>
+                  </li>
+                  <li ngbNavItem>
+                    <a ngbNavLink><i class="fas fa-chart-pie me-2"></i>{{'home.label.tab.trendingmetrics' |
+                      translate}}</a>
+                    <ng-template ngbNavContent>
+                      <div class="trending-metrics">
+                        <div class="column-chart">
+                          <ds-home-tranding-geolocation [collectionorCommunityId]=""
+                            type=""></ds-home-tranding-geolocation>
+                        </div>
+                        <div class="column-chart">
+                          <ds-home-tranding-searches [collectionorCommunityId]="" type=""></ds-home-tranding-searches>
+                        </div>
+                        <hr>
+                        <div class="column-chart">
+                          <ds-home-tranding-types [collectionorCommunityId]="" type=""></ds-home-tranding-types>
+                        </div>
+                        <hr>
+                        <div class="column-chart">
+                          <ds-home-tranding-communities [collectionorCommunityId]=""
+                            type=""></ds-home-tranding-communities>
+                        </div>
+                      </div>
+                    </ng-template>
+                  </li>
+                </ul>
+                <div [ngbNavOutlet]="nav" class="bg-white"></div>
+              </ng-template>
+            </li>
+          </ul>
+          <div [ngbNavOutlet]="nav"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

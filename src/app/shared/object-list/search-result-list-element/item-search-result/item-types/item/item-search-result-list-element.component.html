@@ -1,0 +1,361 @@
+<div class="row item-card justify-content-center"
+  style="margin-left: 0px!important;margin-right: 0px!important;padding-bottom: 0px!important;padding-left: 0px!important;">
+  @if (showThumbnails) {
+  <div class="col-3 col-md-2 image-logo">
+    @if (linkType !== linkTypes.None) {
+    <a [target]="(linkType === linkTypes.ExternalLink) ? '_blank' : '_self'"
+      [attr.rel]="(linkType === linkTypes.ExternalLink) ? 'noopener noreferrer' : null" [routerLink]="[itemPageRoute]"
+      class="dont-break-out" tabindex="-1">
+      <ds-thumbnail [thumbnail]="dso?.thumbnail | async" [limitWidth]="true">
+      </ds-thumbnail>
+    </a>
+    }
+    @if (linkType === linkTypes.None) {
+    <span class="dont-break-out">
+      <ds-thumbnail [thumbnail]="dso?.thumbnail | async" [limitWidth]="true">
+      </ds-thumbnail>
+    </span>
+    }
+  </div>
+  }
+  <div [ngClass]="showThumbnails ? 'col-10 data-col p-2 p-md-1 col-12 col-md-10 d-flex flex-column' : 'col-md-12'">
+    <div class="action-badge row m-0 mt-1">
+      <div class="col-8 ps-0">
+        @if (showLabel) {
+        <ds-badges [object]="dso" [context]="context" [showAccessStatus]="true"></ds-badges>
+        }
+      </div>
+
+      <div class="col-4 pe-2 action-panel d-flex justify-content-end justify-content-xs-center text-primary align-items-start">
+        <!-- Bookmark -->
+        @if (isAuthorized$ | async) {
+        <div class="pe-3">
+          <!-- <i [ngClass]="(bookmarkitem?.status === 'active') ? 'fa' : 'far'"
+         [attr.title]="(bookmarkitem?.status === 'active') ? 'Click here to UnBookmark this item' : 'Click here to Bookmark this item'"
+         class="fa-bookmark element"
+         aria-hidden="true"
+         (click)="savebookmark()">
+      </i> -->
+          <i [ngClass]="(bookmarkitem!=null && bookmarkitem.status==='active')?'fa':'far'"
+            [attr.title]="(bookmarkitem != null && bookmarkitem.status==='active') ? 'Click here to UnBookmark this item' : 'Click here to Bookmark this item'"
+            class="fa-lg fa-bookmark element" style="color: var(--ds-primary-color); cursor: pointer;font-size: 15px;"
+            aria-hidden="true" (click)="savebookmark()">
+          </i>
+        </div>
+        }
+        <!-- Quote -->
+        <div class="pe-3" (click)="openModal()">
+          <i class="fa fa-quote-right" aria-hidden="true"></i>
+        </div>
+
+        <!-- Email -->
+        <div class="pe-3">
+          <a target="_self" href="mailto:?subject={{dso.firstMetadataValue('dc.identifier.uri')}}">
+            <i class="far fa-envelope" aria-hidden="true"></i>
+          </a>
+        </div>
+
+        <!-- Share Dropdown -->
+        <div ngbDropdown class="">
+          <a type="button" class="dropdown-toggle shareActions" id="dropdownBasic1" ngbDropdownToggle
+            aria-haspopup="true" aria-expanded="false">
+            <i class="fa fa-share-alt" aria-hidden="true"></i>
+          </a>
+          <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
+            <a ngbDropdownItem class=""
+              href="https://facebook.com/sharer/sharer.php?u={{dso.firstMetadataValue('dc.identifier.uri')}}">
+              <i class="fab fa-facebook-f facebookshare sharbutton"></i>
+              <span class="ms-2">{{'home.label.facebook' | translate}}</span>
+            </a>
+            <a ngbDropdownItem class=""
+              href="https://twitter.com/share?url={{dso.firstMetadataValue('dc.identifier.uri')}}">
+              <i class="fab fa-twitter twittershare sharbutton"></i>
+              <span class="ms-2">X</span>
+            </a>
+            <a ngbDropdownItem class="" href="whatsapp://send?text={{dso.firstMetadataValue('dc.identifier.uri')}}">
+              <i class="fab fa-whatsapp wahtsupshare sharbutton"></i>
+              <span class="ms-2">{{'home.label.whatsapp' | translate}}</span>
+            </a>
+            <a ngbDropdownItem class=""
+              href="https://www.linkedin.com/shareArticle?mini=true&url={{dso.firstMetadataValue('dc.identifier.uri')}}">
+              <i class="fab fa-linkedin linkshare sharbutton"></i>
+              <span class="ms-2">{{'home.label.linkedin' | translate}}</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    @if (object !== undefined && object !== null) {
+    <ds-truncatable [id]="dso.id">
+      @if (linkType !== linkTypes.None) {
+      <a [target]="(linkType === linkTypes.ExternalLink) ? '_blank' : '_self'"
+        [attr.rel]="(linkType === linkTypes.ExternalLink) ? 'noopener noreferrer' : null" [routerLink]="[itemPageRoute]"
+        class="lead item-list-title dont-break-out" [innerHTML]="dsoTitle" role="link" tabindex="0"></a>
+      }
+      @if (linkType === linkTypes.None) {
+      <span class="lead item-list-title dont-break-out" [innerHTML]="dsoTitle"></span>
+      }
+      <!-- <span class="text-muted">
+        <ds-truncatable-part [id]="dso.id" [minLines]="1">
+          @if (dso.firstMetadataValue('dc.publisher') || dso.firstMetadataValue('dc.date.issued')) {
+          (@if (dso.firstMetadataValue('dc.publisher')) {
+          <span class="item-list-publisher" [innerHTML]="firstMetadataValue('dc.publisher')"></span>
+          }
+          @if (dso.firstMetadataValue('dc.publisher') && dso.firstMetadataValue('dc.date.issued')) {
+          <span>, </span>
+          }
+          @if (dso.firstMetadataValue('dc.date.issued')) {
+          <span class="item-list-date" [innerHTML]="firstMetadataValue('dc.date.issued')"></span>
+          })
+          }
+          @if (dso.allMetadata(['dc.contributor.author', 'dc.creator', 'dc.contributor.*']).length > 0) {
+          <span class="item-list-authors">
+            @for (author of allMetadataValues(['dc.contributor.author', 'dc.creator', 'dc.contributor.*']); track
+            author; let last = $last) {
+            <span>
+              <span [innerHTML]="author"><span [innerHTML]="author"></span></span>
+              @if (!last) {
+              <span>; </span>
+              }
+            </span>
+            }
+          </span>
+          }
+        </ds-truncatable-part>
+      </span> -->
+      
+      <div class="mb-0" [ngClass]="!!isMobileView ? '':' d-flex'">
+        <div>
+          <span
+            *ngIf="allMetadataValues(['dc.contributor.author']).length <= 2 && allMetadataValues(['dc.contributor.author']).length > 0"
+            class="item-list-authors text-secondary">
+            <i class="fa fa-user me-2" aria-hidden="true"
+              *ngIf="allMetadataValues(['dc.contributor.author']).length != 0"></i>
+            <span *ngFor="let author of allMetadataValues(['dc.contributor.author']); let last=last;">
+              <a [routerLink]="['/search']" [queryParams]="{'f.author':author+',equals'}">
+                <!-- <span [title]="author">{{ author.length > (isMobileView ? 10 : 20) ? (author | slice:0:(isMobileView ? 10 : 20)) + '...' : author }}</span> -->
+                <span [title]="author" [innerHTML]="author"></span>
+              </a>
+              <span *ngIf="!last">; </span>
+              <span
+                *ngIf="last && !isMobileView && (dso.allMetadata(['dc.date.issued']).length > 0 || dso.allMetadata(['dc.publisher']).length > 0 || dso.firstMetadataValue(['dc.bibliographicCitation.title']))"
+                style="color: grey!important;">&nbsp;&nbsp;|&nbsp;&nbsp;</span>
+            </span>
+          </span>
+
+          <span class="item-list-authors text-secondary" *ngIf="allMetadataValues(['dc.contributor.author']).length > 2 && !isMobileView">
+            <i class="fa fa-user me-2" aria-hidden="true"></i>
+            <span *ngFor="let author of allMetadataValues(['dc.contributor.author']).slice(0, 2); let last=last;">
+              <a [routerLink]="['/search']" [queryParams]="{'f.author':author+',equals'}">
+                <span [title]="author" [innerHTML]="author"></span>
+              </a>
+              <span *ngIf="!last">; </span>
+            </span>
+            <div *ngIf="allMetadataValues(['dc.contributor.author']).length > 2" ngbDropdown class="d-inline"
+              placement="bottom-end">
+              <a type="button" class="arrowhide dropdown-toggle" id="authorDropdown" ngbDropdownToggle
+                aria-haspopup="true" aria-expanded="false">
+                <i class="fa fa-ellipsis-v ms-2 position-relative top-2px" aria-hidden="true"></i>
+              </a>
+              <span *ngIf="(dso.allMetadata(['dc.date.issued']).length > 0 || dso.allMetadata(['dc.publisher']).length > 0 || dso.firstMetadataValue(['dc.bibliographicCitation.title']))" style="color: grey;">
+                &nbsp;&nbsp;|&nbsp;&nbsp;
+              </span>
+              <div class="listDropdown-left-menu" ngbDropdownMenu aria-labelledby="authorDropdown">
+                <a *ngFor="let author of allMetadataValues(['dc.contributor.author']).slice(2)" ngbDropdownItem>
+                  <a class="h6" [routerLink]="['/search']" [queryParams]="{'f.author':author+',equals'}">
+                    <span style="font-size: 14px!important;" [innerHTML]="author"></span>
+                  </a>
+                </a>
+              </div>
+            </div>
+          </span>
+
+          <span class="item-list-authors text-secondary"
+            *ngIf="allMetadataValues(['dc.contributor.author']).length > 2 && isMobileView">
+            <span *ngFor="let author of allMetadataValues(['dc.contributor.author']).slice(0, 2); let last=last;">
+              <a [routerLink]="['/search']" [queryParams]="{'f.author':author+',equals'}">
+                <!-- <span [title]="author">{{ author.length > (isMobileView ? 10 : 20) ? (author | slice:0:(isMobileView ? 10 : 20)) + '...' : author }}</span> -->
+                <!-- <span style="font-size: 14px!important;">{{ author }}</span> -->
+                <i class="fa fa-user me-2" aria-hidden="true"></i>
+                <span [title]="author" [innerHTML]="author"></span>
+              </a>
+              <span *ngIf="!last"><br></span>
+            </span>
+
+            <div *ngIf="allMetadataValues(['dc.contributor.author']).length > 2" ngbDropdown class="d-inline"
+              style="float: right;">
+              <a type="button" class="arrowhide dropdown-toggle" id="authorDropdown" ngbDropdownToggle
+                aria-haspopup="true" aria-expanded="false">
+                <i class="fa fa-ellipsis-v ms-2 position-relative top-2px" aria-hidden="true"></i>
+              </a>
+              <!-- <span *ngIf="(dso.allMetadata(['dc.date.issued']).length > 0 || dso.allMetadata(['dc.publisher']).length > 0 || dso.firstMetadataValue(['dc.bibliographicCitation.title']))" style="color: grey;">&nbsp;&nbsp;|&nbsp;&nbsp;</span> -->
+              <div class="listDropdown-left-menu" ngbDropdownMenu aria-labelledby="authorDropdown">
+                <a *ngFor="let author of allMetadataValues(['dc.contributor.author']).slice(2)" ngbDropdownItem>
+                  <a class="h6" [routerLink]="['/search']" [queryParams]="{'f.author':author+',equals'}">
+                    <span style="font-size: 14px!important;" [innerHTML]="author"></span>
+                  </a>
+                </a>
+              </div>
+            </div>
+          </span>
+        </div>
+        <div>
+          <span class="text-muted">
+            <span *ngIf="dso.firstMetadataValue(['dc.date.issued'])" class="item-list-authors">
+              <i class="fa-solid fa-calendar-days me-2"></i>
+              <span [innerHTML]="dso.firstMetadataValue(['dc.date.issued'])?.length === 4 ? dso.firstMetadataValue(['dc.date.issued']) : (dso.firstMetadataValue(['dc.date.issued']) | date:'dd/MM/yyyy')"></span>
+              <span
+                *ngIf="!isMobileView && (dso.firstMetadataValue(['dc.publisher']) || dso.firstMetadataValue(['dc.bibliographicCitation.title']))"
+                style="color: grey;">&nbsp;&nbsp;|&nbsp;&nbsp;</span>
+            </span>
+          </span>
+        </div>
+        <div>
+          <span class="text-muted">
+            <span *ngIf="dso.allMetadata(['dc.publisher']).length > 0" class="item-list-authors">
+              <!-- <span *ngIf="!isMobileView" style="color: grey;">&nbsp;|&nbsp;</span> -->
+              <i class="fa-regular fa-building me-2"></i>
+              <span *ngFor="let publisher of allMetadataValues(['dc.publisher']); let last=last;">
+                <span [title]="publisher">{{ publisher.length > (isMobileView ? 40 : 20) ? (publisher |
+                  slice:0:(isMobileView ? 40 : 20)) + '...' : publisher }}</span>
+                <span *ngIf="!last">; </span>
+                <span *ngIf="!isMobileView && dso.firstMetadataValue(['dc.bibliographicCitation.title'])"
+                  style="color: grey;">&nbsp;&nbsp;|&nbsp;&nbsp;</span>
+              </span>
+            </span>
+          </span>
+        </div>
+        <div>
+          <span class="text-muted">
+            <span *ngIf="dso.firstMetadataValue(['dc.bibliographicCitation.title'])" class="item-list-authors">
+              <!-- <span *ngIf="!isMobileView" style="color: grey;">&nbsp;|&nbsp;</span> -->
+              <i class="fa-regular fa-newspaper me-2 ms-2"></i>
+              <span [title]="firstMetadataValue('dc.bibliographicCitation.title')">{{
+                firstMetadataValue('dc.bibliographicCitation.title').length > 20 ?
+                (firstMetadataValue('dc.bibliographicCitation.title') | slice:0:20) + '...' :
+                firstMetadataValue('dc.bibliographicCitation.title') }}</span>
+            </span>
+          </span>
+        </div>
+      </div>
+
+      <div class="mb-2">        
+        <span class="text-muted">
+          <ds-truncatable-part [id]="dso.id" [minLines]="3" *ngIf="dso.firstMetadataValue(['dc.description.abstract'])">
+                <span [innerHTML]="firstMetadataValue('dc.description.abstract')"></span>
+          </ds-truncatable-part>
+        </span>
+      </div>
+      @if(bitstreamLength > 0){
+        <div>
+          <a class="attachment-link text-secondary"  (click)="openpdf()">
+            <i class="fa fa-paperclip"></i>
+            <span class="mx-2">{{'item.label.accessattachment' | translate}}</span>
+            <i class="fa fa-external-link-square animi-icon enlarge"></i>
+            <i class="fa fa-angle-right ms-2 animi-icon enlarge rotatefull skidleft"></i>
+          </a>
+        </div>
+      }
+
+      @if(dso.firstMetadataValue('dc.bitstream.file')){
+        <div class="mt-2">
+          <div class="pr-3 ">
+            <div ngbDropdown class="d-inline-block">
+              <a type="button" class="arrowhide dropdown-toggle" id="dropdownBasic1" ngbDropdownToggle aria-haspopup="true"
+                aria-expanded="false">
+                <i class="fa fa-paperclip"></i>
+                <span class="mx-2">{{'home.label.accessexternalattachments' | translate}}</span>
+                <i class="fa fa-external-link-square animi-icon enlarge"></i>
+                <i class="fa fa-angle-right ms-2 animi-icon enlarge rotatefull skidleft"></i>
+              </a>
+              <div ngbDropdownMenu aria-labelledby="dropdownBasic1">      
+                <ng-container *ngFor="let file of dso.allMetadataValues('dc.bitstream.file'); let last = last;">
+                <a ngbDropdownItem calss=""
+                  href="{{file}}" target="_blank">
+                  <span class="ml-3">{{'home.label.externalfile' | translate}}</span>
+                </a>
+                </ng-container>            
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+
+    </ds-truncatable>
+    }
+  </div>
+  <div class="bottem-count-text mt-3 w-100">
+    <ul>
+      <li class="icon-text border-end" title="{{'home.label.attachmentscount' | translate}}">
+        <i class="fa fa-paperclip mr-3" aria-hidden="true"></i>
+        <span>{{dso.bitstreamcount}}</span>
+      </li>
+      <li class="icon-text" [ngClass]="{'border-end': (allowCommenting || allowRating)}" title="{{'home.label.viewcount' | translate}}">
+        <i class="fa fa-eye mr-3" aria-hidden="true"></i>
+        <span>{{dso.viewcount}}</span>
+      </li>
+      @if(allowRating){
+        <li class="icon-text" [ngClass]="{'border-end': allowCommenting}" title="{{'home.label.avgreting' | translate}}">
+          <i class="fa fa-star mr-3" aria-hidden="true"></i>
+          <span>{{dso.ratinavg}}</span>
+        </li>
+      }
+      @if(allowCommenting){
+        <li class="icon-text" style="border: none!important;" title="{{'home.label.commentcount' | translate}}">
+          <i class="fa fa-comment mr-3 font-wight-info" aria-hidden="true"></i>
+          <span>{{dso.commentcount}}</span>
+        </li>
+      }
+    </ul>
+  </div>
+</div>
+
+<!-- Modal -->
+@if (isModalOpen) {
+<div class="modal show d-block" tabindex="-1" role="dialog" id="exampleModal" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header" style="justify-content: space-between;">
+        <h5 class="modal-title" id="modal-basic-title">
+          <span class="citation-label">{{'item.page.citation' | translate}} :</span>
+          <span class="dso-title" [innerHTML]="dsoTitle"></span>
+        </h5>
+        <button type="button" class="btn btn-light" aria-label="Close" (click)="closeModal()">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-12">
+            <!-- <p #userinput> {{cirtation}}</p> -->
+            @for (item of cirtation; track $index) {
+            <div class="main-div">
+              <div class="key">{{ item[0] }}</div>
+              <div class="value">
+                <div [innerHTML]="item[1]" #userInput></div>
+                <i class="fa fa-copy" ngbTooltip="Copy" (click)="copyInputMessage(userInput)"></i>
+              </div>
+            </div>
+            }
+
+          </div>
+          <div class="col-12 d-flex border-top mt-3 pt-3">
+            <!-- <label class="form-check-label">Style</label> -->
+            <select class="form-control mr-3" [(ngModel)]="cirteanselection">
+              <option value="RefMan" selected>{{'home.label.refman' | translate}}</option>
+              <option value="EndNote">{{'home.label.endnote' | translate}}</option>
+              <option value="BibTeX">{{'home.label.bibteX' | translate}}</option>
+              <option value="xlsx">{{'home.label.expexcelxlxs' | translate}}</option>
+              <option value="csv">{{'home.label.expexcelcsv' | translate}}</option>
+            </select>
+            <button class="float-right mr-3 btn btn-secondary"
+              (click)="dowloadFile()">{{'item.edit.bitstreams.edit.buttons.download' | translate}}</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+}

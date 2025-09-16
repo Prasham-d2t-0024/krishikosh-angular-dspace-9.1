@@ -1,0 +1,46 @@
+<div class="card">
+  @if (linkType !== linkTypes.None) {
+  <a [target]="(linkType === linkTypes.ExternalLink) ? '_blank' : '_self'"
+    [attr.rel]="(linkType === linkTypes.ExternalLink) ? 'noopener noreferrer' : null"
+    [routerLink]="['/communities/', object.id]" class="card-img-top"
+    [attr.title]="'search.results.view-result' | translate">
+    <ds-thumbnail fromCommunity="true" [thumbnail]="(object.logo | async)?.payload" [limitWidth]="false">
+    </ds-thumbnail>
+  </a>
+  }
+  @if (linkType === linkTypes.None) {
+  <span class="card-img-top">
+    <ds-thumbnail [thumbnail]="(object.logo | async)?.payload" [limitWidth]="false">
+    </ds-thumbnail>
+  </span>
+  }
+  <div class="card-body">
+    @if (linkType != linkTypes.None) {
+    <div class="card-title titleheight text-center">
+      <a [target]="(linkType == linkTypes.ExternalLink) ? '_blank' : '_self'"
+        [attr.rel]="(linkType == linkTypes.ExternalLink) ? 'noopener noreferrer' : null"
+        [routerLink]="['/communities/', object.id]" class="h5 text-secondary">{{ dsoNameService.getName(object) }}</a>
+    </div>
+    }
+    </div>
+    <div class="bottem-count-text w-100">
+      <ul>
+        <li class="icon-text border-end" title="{{'home.label.subcommunity' | translate}}">
+          <i class="fa fa-inbox me-2" aria-hidden="true"></i>
+          <span>{{object.subCommunityCount}}</span>
+        </li>
+        <li class="icon-text  border-end" title="{{'home.label.collection' | translate}}">
+          <i class="fa fa-folder me-2" aria-hidden="true"></i>
+          <span>{{object.collectionCount}}</span>
+        </li>
+        <li class="icon-text  border-end" title="{{'home.label.items' | translate}}">
+          <i class="fa fa-file me-2" aria-hidden="true"></i>
+          <span>{{object.itemCount}}</span>
+        </li>
+        <li class="icon-text" style="border: none!important;" title="{{'home.label.viewcount' | translate}}">
+          <i class="fa fa-eye me-2" aria-hidden="true"></i>
+          <span>{{object.viewCount}}</span>
+        </li>
+      </ul>
+    </div>  
+</div>

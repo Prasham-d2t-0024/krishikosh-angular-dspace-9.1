@@ -1,0 +1,134 @@
+<div class="row align-items-center" style="margin-left: 0px!important;margin-right: 0px!important;">
+  <div class="col-md-6 col-sm-12">
+    <div class="chart-heading">
+      <p class="title">{{'home.label.trendingtype' | translate}}</p>
+      <p class="description">{{'home.label.trendingtypeclickinfo' | translate}}</p>
+    </div>
+  </div>
+  <div class="col-md-6 col-sm-12 text-md-end">
+    <div class="d-flex align-items-center justify-content-md-end">
+      @if (isAdmin$ | async) {
+      <i class="fa fa-download me-2" style="cursor: pointer;" title="Download Excel" (click)="downloadExcel()"
+        aria-hidden="true">
+      </i>
+      }
+      <div class="btn-fliter">
+        <button [class]="i === 0 ? 'enabledbutton':''" (click)="buttonClick(0)">{{'home.label.week' |
+          translate}}</button>
+        <span class="line"></span>
+        <button [class]="i === 1 ? 'enabledbutton':''" (click)="buttonClick(1)">{{'home.label.month' |
+          translate}}</button>
+        <span class="line"></span>
+        <button [class]="i === 2 ? 'enabledbutton':''" (click)="buttonClick(2)">{{'home.label.year' |
+          translate}}</button>
+        <span class="line"></span>
+        <button [class]="i === 3 ? 'enabledbutton':''" (click)="buttonClick(3)">{{'home.label.alltime' |
+          translate}}</button>
+      </div>
+      <div>
+        <ng-template #htmlContent>
+          <div>
+            <p>{{'home.label.weekinfo' | translate}}</p>
+            <p>{{'home.label.monthinfo' | translate}}</p>
+            <p>{{'home.label.yearinfo' | translate}}</p>
+            <p>{{'home.label.alltimeinfo' | translate}}</p>
+          </div>
+        </ng-template>
+        <span [ngbTooltip]="htmlContent" class="ms-2"><i class="fas fa-info-circle"></i></span>
+      </div>
+    </div>
+    <div class="chart-heading mt-2">
+      <p class="description">{{'home.label.desireperiod' | translate}}</p>
+    </div>
+  </div>
+</div>
+<div class="row" style="margin-left: 0px!important;margin-right: 0px!important;">
+  <div class="col-md-7 col-sm-12">
+    <div id="trendingtypes" style="max-height: 400px;">
+      @if (isLoading) {
+      <div class="d-flex justify-content-center align-items-center" style="min-height: 450px;">
+        <div class="spinner-border" role="status">
+          <span class="sr-only">{{'home.label.loading' | translate}}</span>
+        </div>
+      </div>
+      }
+      @if (!isLoading) {
+      <ngx-charts-line-chart [scheme]="colorScheme1" [legend]="true" [showXAxisLabel]="false" [showYAxisLabel]="false"
+        [xAxis]="true" [yAxis]="true" [timeline]="true" [results]="lineChart" [legendPosition]="'below'"
+        [showGridLines]="false" [xAxisTicks]="xAxisTicks">
+      </ngx-charts-line-chart>
+      }
+    </div>
+  </div>
+  <div class="col-md-5 col-sm-12" style="height: 100%; min-height: 60vh;">
+    <div class="geo-table m-2  p-2">
+      <div class="col-12">
+        <div class="d-flex align-items-center justify-content-between title-fliter">
+          <div class="title h6">{{selectedType}}<small class="ml-2">({{totalHits}} {{'statistics.table.header.views' |
+              translate}})</small></div>
+          <div class="filter">
+            <div ngbDropdown class="d-inline-block">
+              <button type="button" class="btn filter-dropdown" id="dropdownBasic2" ngbDropdownToggle><i
+                  class="fas fa-filter"></i></button>
+              <div ngbDropdownMenu aria-labelledby="dropdownBasic2" [style.max-height.px]="300"
+                style="overflow-y: auto;">
+                <button ngbDropdownItem (click)="onSelect('')">{{'home.label.alltypes' | translate}}</button>
+                <button *ngFor="let item of typeData" (click)="onSelect(item)" ngbDropdownItem>
+                  {{ item }}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div id="alltype" style="max-height: 150px;" [ngClass]="{'for-one':chartOptions.length === 1,'for-two':chartOptions.length === 2,
+      'for-three':chartOptions.length === 3, 'for-four':chartOptions.length === 4}">
+          @if (isLoading1) {
+          <div class="d-flex justify-content-center align-items-center" style="min-height: 100px;">
+            <div class="spinner-border" role="status">
+              <span class="sr-only">{{'form.loading' | translate}}</span>
+            </div>
+          </div>
+          }
+          @if (!isLoading1) {
+          <ngx-charts-bar-vertical [scheme]="colorScheme" [legend]="false" [showXAxisLabel]="false"
+            [showYAxisLabel]="false" [xAxis]="false" [yAxis]="false" [xAxisLabel]="true" [yAxisLabel]="true"
+            [results]="chartOptions" [legendPosition]="'below'">
+          </ngx-charts-bar-vertical>
+          }
+        </div>
+        <small>{{'home.label.trendinfo' | translate}}</small>
+        <p class="mt-2">{{'home.label.to5viewsinfo' | translate}}</p>
+        <!-- <hr> -->
+        <div class="mb-2" style="border-radius: 15px;border: 1px solid rgba(0, 0, 0, 0.1); background-color: #f2f2f2;">
+          @if (isLoading2) {
+          <div class="d-flex justify-content-center align-items-center" style="min-height: 100px;">
+            <div class="spinner-border" role="status">
+              <span class="sr-only">{{'home.label.loading' | translate}}</span>
+            </div>
+          </div>
+          }
+          @if(!isLoading2) {
+          <ngb-carousel #carousel class="carosel">
+            <ng-template ngbSlide *ngFor="let item of sideCardData">
+              <div class="slider-content m-3">
+                <div class="mb-2" style="min-height: 20px;"><span class="badge badge-secondary">{{item.type}}</span>
+                </div>
+                <a [routerLink]="'/items/' + item.itemid" class="link-desc mt-1 mb-5">{{item.title}}</a>
+                <div class="icon mt-3" style="display: flex;justify-content: flex-end;"><i
+                    class="fas fa-eye me-2"></i>{{item.viewcount}}</div>
+              </div>
+            </ng-template>
+            @if (!sideCardData || sideCardData.length === 0) {
+            <ng-template ngbSlide>
+              <div class="slider-content m-4">
+                <div><span class="badge badge-info">{{'home.label.nodatafound' | translate}}</span></div>
+              </div>
+            </ng-template>
+            }
+          </ngb-carousel>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,159 @@
+<div class="container-fluid m-0 tabViewContainer subCommunity-container">
+  <div class="row">
+    <div class="col-lg-12">
+      <ul ngbNav #nav="ngbNav" class="nav-tabs" style="margin-bottom: 0px!important;">
+        <li ngbNavItem>
+          <a ngbNavLink class="h6">
+            <i class="fas fa-inbox me-2 fa-lg"></i>
+            <span>{{'home.browse.repository' | translate}}</span>
+          </a>
+          <ng-template ngbNavContent>
+            <div class="container-fluid m-0 tabViewContents subCommunityPage">
+              <ng-container *ngIf="(parent$ | async) as parent">
+                <ng-container *ngIf="parent?.payload as parentContext">
+                  <section class="row border-bottom mb-4">
+                    <div class="col-12 col-sm-3">
+                      <ds-comcol-page-logo *ngIf="logoRD$" [logo]="(logoRD$ | async)?.payload"
+                        [alternateText]="'Community Logo'">
+                      </ds-comcol-page-logo>
+                    </div>
+                    <div class="col-12 d-flex col-sm-9 ps-md-0 pt-2">
+                      <header class="comcol-header">
+                        <ds-comcol-page-header [name]="dsoNameService.getName(parentContext)"></ds-comcol-page-header>
+                        <ds-base-comcol-page-handle [content]="parentContext.handle"
+                          [title]="parentContext.type+'.page.handle'">
+                        </ds-base-comcol-page-handle>
+                        <ds-comcol-page-content [content]="parentContext.introductoryText" [hasInnerHtml]="true">
+                        </ds-comcol-page-content>
+                        <ds-comcol-page-content [content]="parentContext.sidebarText" [hasInnerHtml]="true"
+                          [title]="'community.page.news'">
+                        </ds-comcol-page-content>
+                      </header>
+                      <ds-dso-edit-menu></ds-dso-edit-menu>
+                    </div>
+                  </section>
+                  <section class="comcol-page-browse-section">
+                    <ds-base-comcol-page-browse-by [id]="parentContext.id" [contentType]="parentContext.type">
+                    </ds-base-comcol-page-browse-by>
+                    <div class="tab-section mt-2">
+                      <div class="container-fluid">
+                        <div class="row">
+                          <div class="col-md-12">
+                            <div class="tab-nav-band">
+                              <button #communityTab class="tablink1 current"
+                                onclick="CollectionMainTab1(event,'home')">Community</button>
+                              <button #collectionTab class="tablink1"
+                                onclick="CollectionMainTab1(event,'trending')">Collection</button>
+                            </div>
+                            <div id="home" class="text-band1">
+                              <ng-container *ngIf="(subCommunitiesRDObs | async) as subCommunitiesRD">
+                                <div
+                                  *ngIf="subCommunitiesRD?.hasSucceeded && subCommunitiesRD?.payload.totalElements === 0">
+                                  <h6>There is no community in {{parentContext.name}}</h6>
+                                </div>
+                                <div class="sub-communitiesList"
+                                  *ngIf="subCommunitiesRD?.hasSucceeded && subCommunitiesRD?.payload.totalElements > 0"
+                                  @fadeIn>
+                                  <h4>{{'community.sub-community-list.head' | translate}}</h4>
+                                  <ds-viewable-collection [config]="config" [sortConfig]="sortConfig"
+                                    [objects]="subCommunitiesRD" [hideGear]="false">
+                                  </ds-viewable-collection>
+                                </div>
+                                <ds-error *ngIf="subCommunitiesRD?.hasFailed"
+                                  message="{{'error.sub-communities' | translate}}"></ds-error>
+                                <ds-loading *ngIf="subCommunitiesRD?.isLoading"
+                                  message="{{'loading.sub-communities' | translate}}"></ds-loading>
+                              </ng-container>
+                            </div>
+                            <div id="trending" class="text-band1">
+                              <ds-community-page-sub-collection-list [community]="parentContext">
+                              </ds-community-page-sub-collection-list>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </section>
+                </ng-container>
+              </ng-container>
+            </div>
+          </ng-template>
+        </li>
+        <li ngbNavItem>
+          <a ngbNavLink class="h5"><i class="fas fa-chart-line me-2 fa-lg"></i>{{'home.whats.trending' | translate}}</a>
+          <ng-template ngbNavContent>
+
+             <div class="chart-tabs" style="margin-top: 10px;">
+              <ul ngbNav #nav="ngbNav" class="nav-tabs" style="margin-bottom: 0px!important;">
+                <li ngbNavItem>
+                  <a ngbNavLink><i class="fas fa-chart-line me-2"></i>{{'community.trending.items' | translate}}</a>
+                  <ng-template ngbNavContent>
+                    @let communityId = parentId;
+                    @if (communityId) {
+                    <ng-container>
+                      <ds-home-trending-item [collectionorCommunityId]="communityId" type="community"></ds-home-trending-item>
+                    </ng-container>
+                  }
+                  </ng-template>
+                </li>
+                <li ngbNavItem>
+                  <a ngbNavLink><i class="fas fa-chart-pie me-2"></i>{{'community.trending.metrics' | translate}}</a>
+                  <ng-template ngbNavContent>
+                    <div class="trending-metrics">
+                      @let communityId = parentId;
+                      <div class="row align-items-center"  style="margin-left: 0px;margin-right: 0px;">
+                        @if (communityId) {
+                        <ng-container>
+                          <ds-home-tranding-geolocation [collectionorCommunityId]="communityId" type="community"></ds-home-tranding-geolocation>
+                        </ng-container>
+                      }
+                      </div>
+                      <hr>
+                      <div class="column-chart">
+                        @if (communityId) {
+                        <ng-container>
+                          <ds-home-tranding-types [collectionorCommunityId]="communityId" type="community"></ds-home-tranding-types>
+                        </ng-container>
+                      }
+                      </div>
+                      <hr>
+                      <div class="column-chart">
+                        @if (communityId) {
+                        <ng-container>
+                          <ds-home-tranding-collections [collectionorCommunityId]="communityId" type="community"></ds-home-tranding-collections>
+                        </ng-container>
+                      }
+                      </div>
+                    </div>
+                  </ng-template>
+                </li>
+              </ul>
+              <div [ngbNavOutlet]="nav" class="bg-white"></div>
+            </div>
+
+          </ng-template>
+        </li>
+      </ul>
+      <div [ngbNavOutlet]="nav" class="browse-tab-content"></div>
+    </div>
+  </div>
+</div>
+
+<!-- <div class="tab-section mt-2">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="tab-nav-band">
+          <button class="tablink1 current" onclick="CollectionMainTab1(event,'home')">Community</button>
+          <button class="tablink1" onclick="CollectionMainTab1(event,'trending')">Collection</button>
+        </div>
+        <div id="home" class="text-band1">
+          <ds-community-page-sub-community-list [community]="parentContext"></ds-community-page-sub-community-list>
+        </div>
+        <div id="trending" class="text-band1">
+          <ds-community-page-sub-collection-list [community]="parentContext"></ds-community-page-sub-collection-list>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> -->

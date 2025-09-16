@@ -1,0 +1,50 @@
+@import'../css/style.css';
+textarea.form-control {
+    height: 150px !important;
+}
+
+.text-primary {
+    color: var(--ds-primary-color) !important;
+}
+
+.btn-primary {
+    background-color: var(--ds-primary-color) !important;
+    border-color: var(--ds-primary-color) !important;
+}
+
+.editor {
+    min-height: 200px!important;
+    background-color: white;
+}
+.angular-editor .angular-editor-wrapper .angular-editor-textarea{
+    background-color: white !important;
+}
+
+.buttonalign {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.buttonalign-update {
+    display: flex;
+    justify-content: end;
+    align-items: center;
+}
+
+.modal-header {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1rem;
+  border-bottom: 1px solid #dee2e6;
+  border-top-left-radius: calc(0.3rem - 1px);
+  border-top-right-radius: calc(0.3rem - 1px);
+}
+.modal-header .btn-close {
+  padding: 0.5rem 0.5rem;
+  margin: -0.5rem -0.5rem -0.5rem auto;
+}
+
+

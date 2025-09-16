@@ -1,0 +1,67 @@
+:host ::ng-deep {
+  --ds-wrapper-grid-spacing: calc(var(--bs-spacer) / 2);
+
+  div.card {
+    margin-top: var(--ds-wrapper-grid-spacing);
+    margin-bottom: var(--ds-wrapper-grid-spacing);
+
+    div.thumbnail > .thumbnail-content {
+      height: var(--ds-card-thumbnail-height);
+      width: 100%;
+      display: block;
+      min-width: 100%;
+      min-height: 100%;
+      object-fit: contain;
+      object-position: 50% 15%;
+    }
+  }
+}
+
+.card-columns {
+  margin-left: calc(-1 * var(--ds-wrapper-grid-spacing));
+  margin-right: calc(-1 * var(--ds-wrapper-grid-spacing));
+  column-gap: 0;
+
+  .card-column {
+    padding-left: var(--ds-wrapper-grid-spacing);
+    padding-right: var(--ds-wrapper-grid-spacing);
+  }
+}
+
+
+.view-button{
+    align-items: center;
+    // background-color: #1f3f5e;
+    // border: 1px solid #1f3f5e;
+    border-radius: 20px;
+    color: #fff;
+    display: flex;
+    padding: 1px 1px 1px 10px;
+    height: 32px;
+    text-shadow: 0 0 0 #fff;
+    font-size: 14px;
+    gap: 4px;
+}
+
+.btn-height{
+    display: flex;
+    justify-content: flex-end;
+    margin: 10px 0;
+    padding: 0 10px;
+    width: 100%;
+}
+
+.iconview{
+        height: 28px;
+    width: 28px;
+    border-radius: 50%;
+    background-color: #fff;
+    color: #1f3f5e;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.card-title{
+    text-transform: capitalize;
+}

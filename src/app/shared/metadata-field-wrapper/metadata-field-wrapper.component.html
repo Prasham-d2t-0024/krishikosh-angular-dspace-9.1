@@ -1,0 +1,13 @@
+<div class="simple-view-element" [ngStyle]="{'display': oneLineContent ? 'flex' : 'block'}" [class.d-none]="hideIfNoTextContent && content.textContent.trim().length === 0">
+  @if (label) {
+    @if(oneLineContent){
+      <span class="simple-view-element-header fs-1rem text-secondary">{{ label }}&nbsp;:&nbsp;</span>
+    }
+    @else{
+      <h2 class="simple-view-element-header">{{ label }}&nbsp;:&nbsp;</h2>
+    }
+  }
+  <div #content class="simple-view-element-body">
+    <ng-content></ng-content>
+  </div>
+</div>

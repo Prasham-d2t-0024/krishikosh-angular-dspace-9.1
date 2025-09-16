@@ -1,0 +1,25 @@
+@if (!isLoading) {
+<ngx-charts-line-chart
+  [scheme]="colorScheme"
+  [legend]="legend"
+  [legendPosition]="'below'"
+  [showXAxisLabel]="showXAxisLabel"
+  [showYAxisLabel]="showYAxisLabel"
+  [xAxis]="xAxis"
+  [yAxis]="yAxis"
+  [xAxisLabel]="xAxisLabel"
+  [yAxisLabel]="yAxisLabel"
+  [timeline]="timeline"
+  [results]="chartOptions"
+  [legendPosition]="legendPosition"
+  [showGridLines]="false"
+  [xAxisTicks]="xAxisTicks">
+</ngx-charts-line-chart>
+}
+@if(!!isLoading) {
+<div class="d-flex justify-content-center align-items-center" style="min-height: 450px;">
+  <div class="spinner-border" role="status">
+    <span class="sr-only">{{'home.label.loading' | translate}}</span>
+  </div>
+</div>
+}

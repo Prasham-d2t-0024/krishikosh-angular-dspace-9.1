@@ -1,0 +1,42 @@
+<div class="row m-0">
+  <div class="col-md-12" style="background-color: white;padding: 0px 15px;">
+    <div class="tab-nav-band menu-with-filter" style="background-color: white;">
+      <div class="tab-main-menu-band">
+        <button class="tablink current" onclick="WorkSPaceParentTab(event,'Action')"><span
+            class="h5 lead">{{"search.filters.head" | translate}}</span></button>
+        <button class="tablink text-start" onclick="WorkSPaceParentTab(event,'Bookmarks')"><span
+            class="h5 lead">Advanced
+            Search</span></button>
+      </div>
+    </div>
+    <div id="Action" class="text-band" style="display: block;background-color: white;">
+      <div class="p-2">
+        @if ((filters | async)?.hasSucceeded) {
+        <div
+          [class.visually-hidden]="getCurrentFiltersComputed(this.currentConfiguration) < (filters | async)?.payload?.length">
+          @for (filter of (filters | async)?.payload; track filter.name) {
+          <ds-search-filter (isVisibilityComputed)="countFiltersWithComputedVisibility($event)" [scope]="currentScope"
+            [filter]="filter" [inPlaceSearch]="inPlaceSearch" [refreshFilters]="refreshFilters"></ds-search-filter>
+          }
+        </div>
+        }
+      </div>
+    </div>
+    <div id="Bookmarks" class="text-band p-0 pb-3" style="background-color: white;padding-top: 0;">
+      @if (appConfig.search.advancedFilters.enabled) {
+      <ds-advanced-search [inPlaceSearch]="inPlaceSearch"></ds-advanced-search>
+      }
+    </div>
+  </div>
+</div>
+
+
+@if(getCurrentFiltersComputed(this.currentConfiguration)
+< (filters | async)?.payload?.length) { <ngx-skeleton-loader [count]="defaultFilterCount" />
+}
+
+@if (inPlaceSearch) {
+<!-- <button class="btn btn-primary" [routerLink]="[searchLink]" [queryParams]="clearParams | async" (click)="minimizeFilters()" queryParamsHandling="merge" role="button">
+    <i class="fas fa-undo"></i> {{"search.filters.reset" | translate}}
+  </button> -->
+}

@@ -1,0 +1,42 @@
+.chart-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center the chart and legends */
+  }
+  
+  .custom-legend {
+    display: flex;
+    flex-wrap: wrap; /* Allow legends to wrap into multiple lines */
+    justify-content: center; /* Center the legends */
+    margin-top: 10px; /* Space between chart and legends */
+  }
+  
+  .legend-item {
+    display: flex;
+    align-items: center; /* Center text with color box */
+    margin: 5px; /* Space between legend items */
+  }
+  
+  .color-box {
+    width: 12px; /* Width of the color box */
+    height: 12px; /* Height of the color box */
+    margin-right: 5px; /* Space between color box and text */
+  }
+  // .custom-legend {
+  //   display: flex;
+  //   flex-wrap: wrap;
+  //   justify-content: center;
+  //   background-color: #f2f2f2;
+  // }
+  
+  // .custom-legend-item {
+  //   display: flex;
+  //   align-items: center;
+  //   margin: 5px;
+  // }
+  
+  // .legend-color {
+  //   width: 12px;
+  //   height: 12px;
+  //   margin-right: 5px;
+  // }

@@ -1,0 +1,28 @@
+<ng-template #tipContent>
+  <div class="tooltip-content">
+    <p class="m-0">{{tooltipMsg | translate}}</p>
+  </div>
+</ng-template>
+
+<ng-template #tipContentWarning>
+  <div class="tooltip-content">
+    <p class="m-0">{{tooltipMsg | translate}}</p>
+    <p class="m-0 text-warning">{{exportLimitExceededMsg}}</p>
+  </div>
+</ng-template>
+
+@if (shouldShowButton$ | async) {
+  <!-- <button
+    class="btn btn-secondary"
+    [ngbTooltip]="(shouldShowWarning$ | async) ? tipContentWarning : tipContent"
+    (click)="export()"
+    [title]="tooltipMsg | translate" [attr.aria-label]="(shouldShowWarning$ | async) ? ((tooltipMsg | translate) + ' ' + exportLimitExceededMsg): (tooltipMsg | translate)">
+    <i class="fas fa-file-export fa-fw"></i>
+  </button> -->
+  <a rel="noopener noreferrer" class="btn btn-secondary" (click)="export()" style="width: 40px;"
+    [title]="(shouldShowWarning$ | async) ? tipContentWarning : tipContent"
+    [attr.aria-label]="(shouldShowWarning$ | async) ? ((tooltipMsg | translate) + ' ' + exportLimitExceededMsg): (tooltipMsg | translate)"
+    role="button" tabindex="0">
+    <i class="fas fa-file-export fa-fw"></i>
+  </a>
+}

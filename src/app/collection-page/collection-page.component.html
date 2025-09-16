@@ -1,0 +1,135 @@
+<div class="container-fluid">
+  <div class="collection-page" *ngVar="(collectionRD$ | async) as collectionRD">
+    <div class="row">
+      <div class="col-lg-12">
+        <ul ngbNav #nav="ngbNav" class="nav-tabs" style="margin-bottom: 0px!important;">
+          <li ngbNavItem>
+            <a ngbNavLink class="h5">
+              <i class="fas fa-inbox me-2 fa-lg"></i>
+              <span>{{'home.browse.repository' | translate}}</span>
+            </a>
+            <ng-template ngbNavContent>
+              @if (collectionRD?.hasSucceeded) {
+              <div @fadeInOut>
+                @if (collectionRD?.payload; as collection) {
+                <div>
+                  <section class="row border-bottom mb-4 pt-2">
+                    <div class="col-12 col-sm-3">
+                      <!-- Collection logo -->
+                       @if (logoRD$) {
+                      <ds-comcol-page-logo [logo]="(logoRD$ | async)?.payload"
+                        [alternateText]="'collection.logo' | translate">
+                      </ds-comcol-page-logo>
+                      } @else {
+                      <ds-comcol-page-logo [alternateText]="'collection.logo' | translate">
+                      </ds-comcol-page-logo>
+                      }
+                    </div>
+                    <div class="col-12 d-flex col-sm-9 ps-md-0">
+                      <header class="comcol-header mr-auto">
+                        <!-- Collection name -->
+                        <ds-comcol-page-header [name]="dsoNameService.getName(collection)">
+                        </ds-comcol-page-header>
+                         <!-- Handle -->
+                        <ds-comcol-page-handle [content]="collection.handle" [title]="'collection.page.handle'">
+                        </ds-comcol-page-handle>
+                        <!-- Introductory text -->
+                        <ds-comcol-page-content [content]="collection.introductoryText" [hasInnerHtml]="true">
+                        </ds-comcol-page-content>
+                        <!-- News -->
+                        <ds-comcol-page-content [content]="collection.sidebarText" [hasInnerHtml]="true"
+                          [title]="'collection.page.news'">
+                        </ds-comcol-page-content>
+                      </header>
+                      <ds-dso-edit-menu></ds-dso-edit-menu>
+                    </div>
+                  </section>
+                  <section class="comcol-page-browse-section">
+                    <!-- Browse-By Links -->
+                    <ds-comcol-page-browse-by [id]="collection.id" [contentType]="collection.type">
+                    </ds-comcol-page-browse-by>
+                    <router-outlet></router-outlet>
+                  </section>
+                  @if (collection.copyrightText) {
+                  <footer class="border-top my-5 pt-4">
+                    <!-- Copyright -->
+                    <ds-comcol-page-content [content]="collection.copyrightText" [hasInnerHtml]="true">
+                    </ds-comcol-page-content>
+                  </footer>
+                  }
+                </div>
+                }
+              </div>
+              }
+            </ng-template>
+          </li>
+          <li ngbNavItem>
+            <a ngbNavLink class="h5"><i class="fas fa-chart-line me-2 fa-lg"></i>{{'home.whats.trending' |
+              translate}}</a>
+            <ng-template ngbNavContent>
+
+              <div class="chart-tabs" style="margin-top: 10px;">
+                <ul ngbNav #nav="ngbNav" class="nav-tabs" style="margin-bottom: 0px!important;">
+                  <li ngbNavItem>
+                    <a ngbNavLink><i class="fas fa-chart-line me-2"></i>{{'community.trending.items' | translate}}</a>
+                    <ng-template ngbNavContent>
+                      @let collectionId = collectionId$ | async;
+                      @if (collectionId) {
+                      <ng-container>
+                        <ds-home-trending-item [collectionorCommunityId]="collectionId"
+                          type="collection"></ds-home-trending-item>
+                      </ng-container>
+                      }
+                    </ng-template>
+                  </li>
+                  <li ngbNavItem>
+                    <a ngbNavLink><i class="fas fa-chart-pie me-2"></i>{{'community.trending.metrics' | translate}}</a>
+                    <ng-template ngbNavContent>
+                      <div class="trending-metrics">
+                        <div class="row align-items-center" style="margin-left: 0px;margin-right: 0px;">
+                          @let collectionId = collectionId$ | async;
+                          @if (collectionId) {
+                          <ng-container>
+                            <ds-home-tranding-geolocation [collectionorCommunityId]="collectionId"
+                              type="collection"></ds-home-tranding-geolocation>
+                          </ng-container>
+                          }
+                        </div>
+                        <hr>
+                        <div class="column-chart">
+                          @if (collectionId) {
+                          <ng-container>
+                            <ds-home-tranding-searches [collectionorCommunityId]="collectionId"
+                              type="collection"></ds-home-tranding-searches>
+                          </ng-container>
+                          }
+                        </div>
+                        <hr>
+                        <div class="column-chart">
+                          @if (collectionId) {
+                          <ng-container>
+                            <ds-home-tranding-types [collectionorCommunityId]="collectionId"
+                              type="collection"></ds-home-tranding-types>
+                          </ng-container>
+                          }
+                        </div>
+                      </div>
+                    </ng-template>
+                  </li>
+                </ul>
+                <div [ngbNavOutlet]="nav" class="bg-white"></div>
+              </div>
+
+            </ng-template>
+          </li>
+        </ul>
+        <div [ngbNavOutlet]="nav"></div>
+      </div>
+      @if (collectionRD?.hasFailed) {
+      <ds-error message="{{'error.collection' | translate}}"></ds-error>
+      }
+      @if (collectionRD?.isLoading) {
+      <ds-loading message="{{'loading.collection' | translate}}"></ds-loading>
+      }
+    </div>
+  </div>

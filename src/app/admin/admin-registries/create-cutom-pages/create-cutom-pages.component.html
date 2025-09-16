@@ -1,0 +1,121 @@
+<div class="container-fluid my-4" style="width: 98%;">
+  <div class="row">
+    <div class="col-12">
+      
+      <!-- Page Title -->
+      <h4 class="text-primary fw-bold mb-4">
+        {{'about.page.title' | translate}}
+      </h4>
+
+      <!-- Page Name Input Card -->
+      <div class="card shadow-sm bg-white rounded-3 p-4">
+        <div class="row align-items-center">
+          <div class="col-md-11 col-sm-12 mb-3 mb-md-0">
+            <label class="form-label fw-semibold">{{'about.page.pagename' | translate}}</label>
+            <input [formControl]="pagename" type="text" class="form-control" />
+          </div>
+          <div class="col-md-1 col-sm-12 text-end">
+            @if(!loading) {
+              <button class="btn btn-primary mt-4" (click)="addPage()">
+                {{'about.page.addbutton' | translate}}
+              </button>
+            } @else {
+              <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+
+      <!-- Accordion Section -->
+      <div class="card shadow-sm bg-white rounded-3 p-4 mt-5">
+        <div class="accordion" id="accordionExample">
+          
+          @for(item of pagesData; track $index; let i = $index) {
+            <div class="accordion-item mb-3">
+              
+              <h2 class="accordion-header" [id]="'heading' + i" (click)="viewMasterValue(item,$event)">
+                <button class="accordion-button collapsed fw-semibold"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        (click)="mastervaluedata(item,i)"
+                        [attr.data-bs-target]="'#collapse' + i"
+                        [attr.aria-expanded]="i === 0 ? 'true' : 'false'"
+                        [attr.aria-controls]="'collapse' + i"
+                        style="background-color: var(--ds-primary-color); color: #fff;">
+                  {{ item.mastername }}
+                </button>
+              </h2>
+
+              <div [id]="'collapse' + i" class="accordion-collapse collapse"
+                   [attr.aria-labelledby]="'heading' + i" data-bs-parent="#accordionExample">
+                <div class="accordion-body">
+                  
+                  <div class="mb-3">
+                    <input [formControl]="pagetext" type="text" class="form-control" />
+                  </div>
+
+                  <div class="mb-4">
+                    <angular-editor class="editor" [config]="editorConfig" [(ngModel)]="typedValue"
+                                    (ngModelChange)="saveTypedValue($event)"></angular-editor>
+                  </div>
+
+                  <!-- Action Buttons -->
+                  <div class="d-flex justify-content-end">
+                    @if(!loading1) {
+                      <button class="btn btn-danger me-2" (click)="deletePage(deletewarning,item)">
+                        {{'about.page.deletebutton' | translate}}
+                      </button>
+
+                      @if(!isAdd) {
+                        <button class="btn btn-primary me-2" (click)="updatePage(item)">
+                          {{'about.page.updatebutton' | translate}}
+                        </button>
+                      } @else {
+                        <button class="btn btn-primary me-2" (click)="addPageContent(item)">
+                          {{'about.page.addbutton' | translate}}
+                        </button>
+                      }
+                    } @else {
+                      <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                      </div>
+                    }
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+
+        <!-- No Data -->
+        @if(pagesData.length === 0) {
+          <div class="text-muted mt-3">
+            {{'statistics.page.no-data' | translate}}
+          </div>
+        }
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<ng-template #deletewarning let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <h4 class="modal-title text-danger">{{'cretaepages.label.popup.deleteheader' | translate}}</h4>
+        <button type="button" id="delete_close" class="btn btn-light" aria-label="Close" (click)="d('cancel')">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <p>{{'cretaepages.label.popup.deleteask' | translate}}</p>
+    </div>
+    <div class="modal-footer">
+        <button type="button" id="delete_cancel" class="btn btn-secondary"
+            (click)="c('cancel')">{{'submission.general.discard.confirm.cancel' | translate}}</button>
+        <button type="button" id="delete_confirm" class="btn btn-danger"
+            (click)="c('ok')">{{'submission.general.discard.confirm.submit' | translate}}</button>
+    </div>
+</ng-template>

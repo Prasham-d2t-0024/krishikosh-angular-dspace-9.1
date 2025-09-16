@@ -1,0 +1,1041 @@
+@if (showBackButton$ | async) {
+<ds-results-back-button [back]="back"></ds-results-back-button>
+}
+@if (iiifEnabled) {
+<div class="row">
+  <div class="col-12">
+    <ds-mirador-viewer id="iiif-viewer" [object]="object" [searchable]="iiifSearchEnabled" [query]="iiifQuery$ | async">
+    </ds-mirador-viewer>
+  </div>
+</div>
+}
+<div class="container-fluid">
+<div >
+  <div class="row bg-white top-header-card">
+    <div class="col-xs-12 col-md-2 image-box mt-3 px-3">
+      @if (!(mediaViewer.image || mediaViewer.video)) {
+      <ds-metadata-field-wrapper [hideIfNoTextContent]="false">
+        <ds-thumbnail [thumbnail]="object?.thumbnail | async"></ds-thumbnail>
+      </ds-metadata-field-wrapper>
+      }
+      @if (mediaViewer.image || mediaViewer.video) {
+      <div class="mb-2">
+        <ds-media-viewer [item]="object"></ds-media-viewer>
+      </div>
+      }
+    </div>
+    <!-- <div class="col-xs-12 col-md-10 image-box">
+      <div class="d-flex flex-row">
+        <ds-item-page-title-field [item]="object" class="me-auto">
+        </ds-item-page-title-field>
+        <ds-dso-edit-menu></ds-dso-edit-menu>
+      </div>
+      <ds-metadata-representation-list class="ds-item-page-mixed-author-field" [parentItem]="object"
+        [itemType]="'Person'" [metadataFields]="['dc.contributor.author', 'dc.creator']"
+        [label]="'item.page.authors' | translate">
+      </ds-metadata-representation-list>
+    </div> -->
+    <div class="col-xs-12 col-md-10 py-3 px-3">
+      <div class="w-100 d-flex justify-content-between">
+        <div>
+          @if(object.allMetadataValues('dc.type')?.length){
+            @for (type of object.allMetadataValues('dc.type'); track type; let first = $first) {
+            <span [style.margin-left.px]="first ? 0 : 4">
+              <span class="badge badge-secondary">{{ type | translate }}</span>
+            </span>
+            }
+          } 
+        </div>
+        <ds-dso-edit-menu></ds-dso-edit-menu>
+      </div>
+      <div class="d-flex flex-row mb-2 text-secondary justify-content-between">
+        <ds-item-page-title-field [item]="object" class=""></ds-item-page-title-field>
+      </div>
+      <div class="col-lg-12 mb-2 p-0">
+        @if (object.firstMetadataValue('dc.title.alternative')) {
+        <span class="text-secondary h6">
+          {{ 'untypeitem.metadata.othertitles' | translate }} :
+        </span>
+        @for (titles of object.allMetadataValues('dc.title.alternative'); track titles; let last = $last) {
+        <span class="text-black">{{ titles }}</span>
+        @if (!last) { <span> | </span> }
+        }
+        }
+      </div>
+      
+      <div class="col-lg-12 mb-2 p-0">
+        @if (object.firstMetadataValue('dc.contributor.author')) {
+        <span class="text-secondary h6">
+          {{ 'untypeitem.metadata.authors' | translate }} :
+        </span>
+        @for (author of object.allMetadataValues('dc.contributor.author'); track author; let last = $last) {
+        @if (author.split('[').length == 2) {
+        <a [href]="getasfalink(author)" target="_blank">
+          {{ author.split("[")[0] }} <img src="assets/images/orcid.png">
+        </a>
+        }
+        @else {
+        <a [routerLink]="['/search']" [queryParams]="{ 'f.author': author + ',equals' }">
+          {{ author }}
+        </a>
+        }
+        @if (!last) { <span> | </span> }
+        }
+        }
+      </div>
+      
+      <div class="col-lg-12 mb-2 p-0">
+        @if (object.firstMetadataValue('dc.contributor.editor')) {
+        <span class="text-secondary h6">
+          {{ 'untypeitem.metadata.editors' | translate }} :
+        </span>
+        @for (editor of object.allMetadataValues('dc.contributor.editor'); track editor; let last = $last) {
+        <span class="text-black">{{ editor }}</span>
+        @if (!last) { <span> | </span> }
+        }
+        }
+      </div>
+      
+      <div class="col-lg-12 mb-2 p-0">
+        @if (object.firstMetadataValue('dc.contributor.corpauthor')) {
+        <span class="text-secondary h6">
+          {{ 'untypeitem.metadata.corporateauthor' | translate }} :
+        </span>
+        @for (corp of object.allMetadataValues('dc.contributor.corpauthor'); track corp; let last = $last) {
+        <span class="text-black">{{ corp }}</span>
+        @if (!last) { <span> | </span> }
+        }
+        }
+      </div>
+      
+      <div class="col-lg-12 mb-2 p-0">
+        @if (object.firstMetadataValue('dc.date.issued')) {
+        <span class="text-secondary h6">
+          {{ 'untypeitem.metadata.yearofpublication' | translate }} :
+        </span>
+        <span class="text-black">{{ object.firstMetadataValue('dc.date.issued') }}</span>
+        }
+      </div>
+      
+      <div class="col-lg-12 mb-2 p-0">
+        @if (object.firstMetadataValue('dc.language.iso')) {
+        <span class="text-secondary h6">
+          {{ 'untypeitem.metadata.language' | translate }} :
+        </span>
+        @for (lang of object.allMetadataValues('dc.language.iso'); track lang; let last = $last) {
+        <a class="h6" [routerLink]="['/search']" [queryParams]="{ 'f.language': lang + ',equals' }">
+          <span class="badge badge-secondary">{{ lang }}</span>
+        </a>
+        @if (!last) { <span> | </span> }
+        }
+        }
+      </div>
+      
+      <div class="col-lg-12 mb-2 p-0">
+        @if (object.firstMetadataValue('dc.subject')) {
+        <span class="text-secondary h6">
+          {{ 'untypeitem.metadata.keywords' | translate }} :
+        </span>
+        @for (subject of object.allMetadataValues('dc.subject'); track subject; let last = $last) {
+        <a class="h6" [routerLink]="['/search']" [queryParams]="{ 'f.subject': subject + ',equals' }">
+          <span class="badge badge-secondary">{{ subject }}</span>
+        </a>
+        @if (!last) { <span> | </span> }
+        }
+        }
+      </div>
+      
+      <div class="col-lg-12 mb-2 p-0">
+        @if (object.firstMetadataValue('dc.department')) {
+        <span class="text-secondary h6">
+          {{ 'untypeitem.metadata.department' | translate }} :
+        </span>
+        @for (dept of object.allMetadataValues('dc.department'); track dept; let last = $last) {
+        <a class="h6" [routerLink]="['/search']" [queryParams]="{ 'f.department': dept + ',equals' }">
+          <span class="badge badge-secondary">{{ dept }}</span>
+        </a>
+        @if (!last) { <span> | </span> }
+        }
+        }
+      </div>
+      
+      <div class="col-lg-12 mb-2 p-0">
+        @if (object.firstMetadataValue('dc.location')) {
+        <span class="text-secondary h6">
+          {{ 'untypeitem.metadata.location' | translate }} :
+        </span>
+        @for (loc of object.allMetadataValues('dc.location'); track loc; let last = $last) {
+        <a class="h6" [routerLink]="['/search']" [queryParams]="{ 'f.location': loc + ',equals' }">
+          <span class="badge badge-secondary">{{ loc }}</span>
+        </a>
+        @if (!last) { <span> | </span> }
+        }
+        }
+      </div>
+      
+      <div class="col-lg-12 mb-2 p-0">
+        @if (object.firstMetadataValue('dc.location.library')) {
+        <span class="text-secondary h6">
+          {{ 'untypeitem.metadata.librarylocation' | translate }} :
+        </span>
+        @for (lib of object.allMetadataValues('dc.location.library'); track lib; let last = $last) {
+        <a class="h6" [routerLink]="['/search']" [queryParams]="{ 'f.loclib': lib + ',equals' }">
+          <span class="badge badge-secondary">{{ lib }}</span>
+        </a>
+        @if (!last) { <span> | </span> }
+        }
+        }
+      </div>
+
+    </div>
+    <div class="container-fluid itemdetail-footer-actions">
+      <div class="row action-row" style="color: var(--ds-secondary-color);">
+        <div class="col-12 col-md-6 footeractions-left">
+          <div class="d-flex flex-wrap flex-md-nowrap flex-action">
+            <div class="col-3 col-md-3 border-right text-center">
+              <span>
+                <i class="fa fa-lg fa-eye me-1" aria-hidden="true"></i>
+                <span>{{ 'statistics.table.header.views' | translate }}</span>
+              </span>
+              <p>{{object.viewcount}}</p>
+            </div>
+            <div class="col-3 col-md-3 border-right text-center">
+              <span>
+                <i class="fa fa-lg fa-download me-1" aria-hidden="true"></i>
+                <span>{{ 'home.label.downloads' | translate }}</span>
+              </span>
+              <p>{{object.download}}</p>
+            </div>
+            @if(allowCommenting){
+              <div class="col-3 col-md-3 border-right text-center">
+               <span>
+                 <i class="fa fa-lg fa-comment me-1" aria-hidden="true"></i>
+                 <span>{{ 'home.label.commentcounts' | translate }}</span>
+               </span>
+               <p><u><a style="color: var(--ds-secondary-color);" href="javascript:void(0)" (click)="scrollToComments()">{{object.commentcount}}</a></u></p>
+             </div>
+            }
+            @if(allowRating){
+              <div class="col-3 col-md-3 border-right text-center">
+                <div class="nav-item dropdown" ngbDropdown>
+                  <a class="p-0 nav-link dropdown-toggle" id="navbarScrollingDropdown" role="button"
+                    data-bs-toggle="dropdown" aria-expanded="false" style="color: var(--ds-secondary-color);"
+                    ngbDropdownToggle>
+                    <i class="fa fa-lg fa-star mr-1" aria-hidden="true"> </i>
+                    {{ 'advanced-workflow-action.rating.form.rating.label' | translate }}
+                  </a>
+                  <div class="container-fluid" style="min-width: 352px;" ngbDropdownMenu
+                    aria-labelledby="navbarScrollingDropdown">
+                    <div class="row border-bottom text-center m-0 p-2" style="color: var(--ds-secondary-color);">
+                      <div class="col-6 border-right">
+                        <div class="">{{ 'untypeitem.metadata.yourrating' | translate }}</div>
+                        <div class="ratingSectionNum">
+                          <span class="font-weight-bold h5">
+                            @if (!(isAuthorized$ | async)) {
+                            <span>N</span>
+                            }
+                            @if ((isAuthorized$ | async) && myrating) {
+                            <span>{{ myrating.ratingcount === 0 ? 'N' : myrating.ratingcount }}</span>
+                            }
+                          </span>
+                          <span class="ratedDivider">/</span>
+                          <span class="h6">
+                            @if (!(isAuthorized$ | async)) {
+                            <span>A</span>
+                            }
+                            @if ((isAuthorized$ | async) && myrating) {
+                            <span>{{ myrating.ratingcount === 0 ? 'A' : 5 }}</span>
+                            }
+                          </span>
+                        </div>
+                        <div class="ratingSectionStars">
+                          <div class="smallfix yourratingdiv">
+                            @if (!myrating) {
+                            <span>
+                              @for (item of [].constructor(5); track $index) {
+                              <i class="far fa-sm fa-star ml-1" aria-hidden="true"> </i>
+                              }
+                            </span>
+                            }
+                            @if (myrating) {
+                            <span>
+                              @for (item of [].constructor(myrating.ratingcount); track $index) {
+                              <i class="fa fa-sm fa-star ml-1" aria-hidden="true"> </i>
+                              }
+                              @for (item of [].constructor(5 - myrating.ratingcount); track $index) {
+                              <i class="far fa-sm fa-star ml-1" aria-hidden="true"> </i>
+                              }
+                            </span>
+                            }
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-6">
+                        <div>{{ 'untypeitem.metadata.avgrating' | translate }}</div>
+                        <div class="ratingSectionNum">
+                          <span class="font-weight-bold h5">{{ avgrating }}</span>
+                          <span class="ratedDivider">/</span><span class="h6">5</span>
+                        </div>
+                        <div class="ratingSectionStars">
+                          <div class="smallfix yourratingdiv">
+                            @for (item of [].constructor(avgrating); track $index) {
+                            <i class="fa fa-sm fa-star ml-1" aria-hidden="true"></i>
+                            }
+                            @for (item of [].constructor(5 - avgrating); track $index) {
+                            <i class="far fa-sm fa-star ml-1" aria-hidden="true"></i>
+                            }
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+  
+                    <div class="row  m-0 p-2" style="color: var(--ds-secondary-color);">
+                      <div class="col-12">
+                        <div class="h6">{{ 'untypeitem.metadata.ratingbreakup' | translate }}</div>
+                        @for (brestart of breakingRatingArr; track brestart) {
+                        <div class="viwerBreakupRow starFive">
+                          <div class="side">
+                            <div>{{ brestart.key }} <i class="fa fa-star"></i></div>
+                          </div>
+                          <div class="middle w-75">
+                            <div class="bar-container bg-secondary"
+                              [style.width]="getwidthRating(brestart.value,object.ratingcount) " style="height: 10px;">
+                            </div>
+                          </div>
+                          <div class="right">
+                            <div class="count5start">{{ brestart.value }}</div>
+                          </div>
+                        </div>
+                        }
+  
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <p>
+                  @for (item of [].constructor(avgrating); track $index) {
+                  <i class="fa fa-sm fa-star ml-1" aria-hidden="true"></i>
+                  }
+                  @for (item of [].constructor(5 - avgrating); track $index) {
+                  <i class="far fa-sm fa-star ml-1" aria-hidden="true"></i>
+                  }
+                </p>
+              </div>
+            }
+          </div>
+        </div>
+        <!-- Flex Container in Column Direction -->
+        <div class="col-12 col-md-6 footeractions-right" style="color: var(--ds-secondary-color);">
+          <div class="row justify-content-around justify-content-md-end m-md-0 mb-2 flex-action gap-2">
+            <div class="d-flex justify-content-end">
+              @if(allowRating){
+                <div class="text-center user-rating-action">
+                  <p class="m-0 p-0">{{ 'untypeitem.metadata.rating' | translate }}</p>
+                  @if (!(isAuthorized$ | async) && !myrating) {
+                  <span>
+                    <i class="far fa-lg fa-star element" aria-hidden="true" style="cursor: pointer;"
+                      style="color: var(--ds-secondary-color);" (click)="saveRating(1)"></i>
+                    <i class="far fa-lg fa-star element" aria-hidden="true" style="cursor: pointer;"
+                      style="color: var(--ds-secondary-color);" (click)="saveRating(2)"></i>
+                    <i class="far fa-lg fa-star element" aria-hidden="true" style="cursor: pointer;"
+                      style="color: var(--ds-secondary-color);" (click)="saveRating(3)"></i>
+                    <i class="far fa-lg fa-star element" aria-hidden="true" style="cursor: pointer;"
+                      style="color: var(--ds-secondary-color);" (click)="saveRating(4)"></i>
+                    <i class="far fa-lg fa-star element" aria-hidden="true" style="cursor: pointer;"
+                      style="color: var(--ds-secondary-color);" (click)="saveRating(5)"></i>
+                  </span>
+                  }
+                  @if (myrating) {
+                  <span>
+                    @for (item of [].constructor(5); track $index; let i = $index) {
+                      @if (i < myrating.ratingcount) { <i class="fa fa-sm fa-star ml-1" aria-hidden="true"
+                        style="cursor: pointer;" (click)="saveRating(i+1)">
+                        </i>
+                        }
+                        @else {
+                        <i class="far fa-sm fa-star ml-1" aria-hidden="true" style="cursor: pointer;"
+                          (click)="saveRating(i+1)">
+                        </i>
+                        }
+                      }
+                  </span>
+                  }
+                </div>
+              }
+              <div class="d-flex align-self-end justify-content-center justify-content-md-start pl-4 action-icons">
+                @if (isAuthorized$ | async) {
+                <div class="pr-3 text-center">
+                  <span style="color: var(--ds-secondary-color);">
+                    <i [ngClass]="(bookmarkitem!=null && bookmarkitem.status==='active')?'fa':'far'"
+                      [attr.title]="(bookmarkitem != null && bookmarkitem.status==='active') ? 'Click here to UnBookmark this item' : 'Click here to Bookmark this item'"
+                      class="fa-lg fa-bookmark element" style="color: var(--ds-secondary-color); cursor: pointer;"
+                      aria-hidden="true" (click)="savebookmark()">
+                    </i>
+                  </span>
+                </div>
+                }
+                <div class="pr-3 text-center" style="color: var(--ds-secondary-color);">
+                  <div ngbDropdown class="d-inline-block">
+                    <a type="button" class="arrowhide dropdown-toggle" id="dropdownBasic1" ngbDropdownToggle
+                      style="color: var(--ds-secondary-color);" aria-haspopup="true" aria-expanded="false">
+                      <i class="fa fa-lg fa-share-alt " aria-hidden="true"> </i>
+                    </a>
+                    <div ngbDropdownMenu aria-labelledby="dropdownBasic1" style="color: var(--ds-secondary-color);">
+                      <a ngbDropdownItem style="color: var(--ds-secondary-color);"
+                        href="https://facebook.com/sharer/sharer.php?u={{object.firstMetadataValue('dc.identifier.uri')}}">
+                        <i class="fab fa-facebook-f facebookshare sharbutton"></i> <span class="m-1">{{
+                          'home.label.facebook' | translate }}</span>
+                      </a>
+                      <a ngbDropdownItem style="color: var(--ds-secondary-color);"
+                        href="https://twitter.com/share?url={{object.firstMetadataValue('dc.identifier.uri')}}">
+                        <i class="fab fa-twitter twittershare sharbutton"></i> <span class="m-1">X</span>
+                      </a>
+                      <a ngbDropdownItem style="color: var(--ds-secondary-color);"
+                        href="whatsapp://send?text={{object.firstMetadataValue('dc.identifier.uri')}}">
+                        <i class="fab fa-whatsapp wahtsupshare sharbutton"></i> <span class="m-1">{{ 'home.label.whatsapp'
+                          | translate }}</span>
+                      </a>
+                      <a ngbDropdownItem style="color: var(--ds-secondary-color);"
+                        href="https://www.linkedin.com/shareArticle?mini=true&url={{object.firstMetadataValue('dc.identifier.uri')}}">
+                        <i class="fab fa-linkedin linkshare sharbutton"></i> <span class="m-1">{{ 'home.label.linkedin' |
+                          translate }}</span>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+                <div class="pr-3 text-center" (click)="Citation(content)">
+                  <a target="_self" style="color: var(--ds-secondary-color); cursor: pointer;">
+                    <i class="fa fa-lg fa-quote-right" aria-hidden="true"></i>
+                  </a>
+                </div>
+                <div class="pr-3 text-center">
+                  <a target="_self" href="mailto:?subject={{object.firstMetadataValue('dc.identifier.uri')}}"
+                    style="color: var(--ds-secondary-color);">
+                    <i class="far fa-lg fa-envelope" aria-hidden="true"> </i>
+                  </a>
+                </div>
+                <div class="pr-3 text-center" (click)="printPage()"
+                  style="color: var(--ds-secondary-color);cursor: pointer;">
+                  <span>
+                    <i class="fa fa-lg fa-print" aria-hidden="true"></i>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div >
+  <div class="row row-cols mt-3 info-block">
+    <div class="col-12 col-md-4 mb-md-0 mb-3 pe-md-3 p-0 attachments">
+      <div class="bg-white h-100 p-3 w-100">
+        <ds-item-page-file-section [item]="object"></ds-item-page-file-section>
+      </div>
+    </div>
+    <div class="col-12 col-md-8 pl-md-1 p-0 moredetails bg-white">
+      <div class="bg-white h-100 p-3 w-100">
+        <h4 class="mb-2 text-secondary ">{{'untypeitem.metadata.moredetail' | translate}}</h4>
+        <div class="col-lg-12 mb-3 p-0 item-list-abstract text-justify" *ngIf="object.allMetadataValues('dc.description.abstract')">
+          <ng-container *ngFor="let abstract of object.allMetadataValues('dc.description.abstract'); let last = last; let idx =  index">
+            <ds-truncatable [id]="idx" *ngIf="object !== undefined && object !== null">
+              <ds-truncatable-part [id]="idx" [minLines]="3">
+                <span class="text-secondary  h6">{{'item.page.abstract' | translate}} : </span>
+                <span class="slash text-black" [innerHTML]="abstract"></span>
+              </ds-truncatable-part>
+            </ds-truncatable>
+          </ng-container>
+        </div>
+        <div class="col-lg-12 mb-3 p-0 item-list-abstract text-justify" *ngIf="object.firstMetadataValue('dc.description')">
+          <ds-truncatable [id]="1" *ngIf="object !== undefined && object !== null">
+            <ds-truncatable-part [id]="1" [minLines]="3">
+              <span class="text-secondary h6">{{'admin.registries.bitstream-formats.edit.description.label' | translate}}&nbsp;:&nbsp;
+              </span>
+              <span class="slash text-black" [innerHTML]="object.firstMetadataValue('dc.description').trim()"></span>
+            </ds-truncatable-part>
+          </ds-truncatable>
+        </div>
+        <div class="col-lg-12 mb-3 p-0 item-list-abstract" *ngIf="object.firstMetadataValue('dc.publisher')">
+          <span class="text-secondary  h6">{{'untypeitem.metadata.publisher' | translate}} : </span>
+          <!-- <span class="text-black">{{object.firstMetadataValue('dc.publisher')}}</span> -->
+          <ng-container *ngFor="let publisher of object.allMetadataValues('dc.publisher'); let last = last;">
+            <span>{{publisher}}</span>
+            <span *ngIf="!last"> | </span>
+          </ng-container>
+        </div>
+        <div class="col-lg-12 mb-3 p-0 item-list-abstract"
+          *ngIf="object.firstMetadataValue('dc.bibliographicCitation.title')">
+          <span class="text-secondary  h6">{{'untypeitem.metadata.journaltitle' | translate}} : </span>
+          <!-- <span class="text-black">{{object.firstMetadataValue('dc.bibliographicCitation.title')}}</span> -->
+          <ng-container
+            *ngFor="let journaltitle of object.allMetadataValues('dc.bibliographicCitation.title'); let last = last;">
+            <span>{{journaltitle}}</span>
+            <span *ngIf="!last"> | </span>
+          </ng-container>
+        </div>
+        <div class="col-lg-12 mb-3 p-0 item-list-abstract"
+          *ngIf="object.firstMetadataValue('dc.bibliographicCitation.volume')">
+          <span class="text-secondary  h6">{{'untypeitem.metadata.volume' | translate}} : </span>
+          <!-- <span class="text-black">{{object.firstMetadataValue('dc.bibliographicCitation.volume')}}</span> -->
+          <ng-container
+            *ngFor="let volume of object.allMetadataValues('dc.bibliographicCitation.volume'); let last = last;">
+            <span>{{volume}}</span>
+            <span *ngIf="!last"> | </span>
+          </ng-container>
+        </div>
+
+
+        <div class="col-lg-12 mb-3 p-0 item-list-abstract"
+          *ngIf="object.firstMetadataValue('dc.bibliographicCitation.issue')">
+          <span class="text-secondary  h6">{{'untypeitem.metadata.articleno' | translate}} : </span>
+          <ng-container
+            *ngFor="let issue of object.allMetadataValues('dc.bibliographicCitation.issue'); let last = last;">
+            <span>{{issue}}</span>
+            <span *ngIf="!last"> | </span>
+          </ng-container>
+        </div>
+        <div class="col-lg-12 mb-3 p-0 item-list-abstract" *ngIf="object.firstMetadataValue('dc.format.pagerange')">
+          <span class="text-secondary  h6">{{'untypeitem.metadata.pagerange' | translate}} : </span>
+          <!-- <span class="text-black">{{object.firstMetadataValue('dc.format.pagerange')}}</span> -->
+          <ng-container *ngFor="let pagerange of object.allMetadataValues('dc.format.pagerange'); let last = last;">
+            <span>{{pagerange}}</span>
+            <span *ngIf="!last"> | </span>
+          </ng-container>
+        </div>
+        <div class="col-lg-12 mb-3 p-0 item-list-abstract" *ngIf="object.firstMetadataValue('dc.title.parent')">
+          <span class="text-secondary  h6">{{'untypeitem.metadata.titleofparentbook' | translate}} : </span>
+          <!-- <span class="text-black">{{object.firstMetadataValue('dc.title.parent')}}</span> -->
+          <ng-container *ngFor="let parent of object.allMetadataValues('dc.title.parent'); let last = last;">
+            <span>{{parent}}</span>
+            <span *ngIf="!last"> | </span>
+          </ng-container>
+        </div>
+        <div class="col-lg-12 mb-3 p-0 item-list-abstract"
+          *ngIf="object.firstMetadataValue('dc.contributor.editorparent')">
+          <span class="text-secondary  h6">{{'untypeitem.metadata.editorofparentbook' | translate}} : </span>
+          <!-- <span class="text-black">{{object.firstMetadataValue('dc.title.parent')}}</span> -->
+          <ng-container
+            *ngFor="let editorparent of object.allMetadataValues('dc.contributor.editorparent'); let last = last;">
+            <span>{{editorparent}}</span>
+            <span *ngIf="!last"> | </span>
+          </ng-container>
+        </div>
+        <div class="col-lg-12 mb-3 p-0 item-list-abstract" *ngIf="object.firstMetadataValue('dc.rights')">
+          <span class="text-secondary  h6">{{'untypeitem.metadata.creativecommons' | translate}} : </span>
+          <!-- <span class="text-black">{{object.firstMetadataValue('dc.rights')}}</span> -->
+          <ng-container *ngFor="let rights of object.allMetadataValues('dc.rights'); let last = last;">
+            <span>{{rights}}</span>
+            <span *ngIf="!last"> | </span>
+          </ng-container>
+        </div>
+
+
+        <div class="col-lg-12 mb-3 p-0 item-list-abstract" *ngIf="object.firstMetadataValue('dc.identifier.citation')">
+          <span class="text-secondary  h6">{{'item.page.citation' | translate}} : </span>
+          <!-- <span class="text-black">{{object.firstMetadataValue('dc.identifier.citation')}}</span> -->
+          <ng-container *ngFor="let citation of object.allMetadataValues('dc.identifier.citation'); let last = last;">
+            <span>{{citation}}</span>
+            <span *ngIf="!last"> | </span>
+          </ng-container>
+        </div>
+
+        <div class="col-lg-12 mb-3 p-0 item-list-abstract" *ngIf="object.firstMetadataValue('dc.identifier')">
+          <span class="text-secondary  h6">{{'untypeitem.metadata.identifiers' | translate}} : </span>
+          <!-- <a [href]="object.firstMetadataValue('dc.identifier')">{{object.firstMetadataValue('dc.identifier')}}</a> -->
+          <ng-container *ngFor="let identifier of object.allMetadataValues('dc.identifier'); let last = last;">
+            <a [href]="identifier">{{identifier}}</a>
+            <span *ngIf="!last"> | </span>
+          </ng-container>
+        </div>
+
+        <div class="col-lg-12 mb-3 p-0 item-list-abstract"
+          *ngIf="object.firstMetadataValue('refterms.dateFirstOnline')">
+          <span class="text-secondary  h6">{{'untypeitem.metadata.dateofonlinepubliction' | translate}} : </span>
+          <!-- <span class="text-black">{{object.firstMetadataValue('refterms.dateFirstOnline')}}</span> -->
+          <ng-container *ngFor="let date of object.allMetadataValues('refterms.dateFirstOnline'); let last = last;">
+            <span>{{date}}</span>
+            <span *ngIf="!last"> | </span>
+          </ng-container>
+        </div>
+
+        <div class="col-lg-12 mb-3 p-0 item-list-abstract"
+          *ngIf="object.firstMetadataValue('rioxxterms.licenseref.uri')">
+          <span class="text-secondary  h6">{{'untypeitem.metadata.licenceuri' | translate}} : </span>
+          <!-- <span class="text-black">{{object.firstMetadataValue('rioxxterms.licenseref.uri')}}</span> -->
+          <ng-container *ngFor="let uri of object.allMetadataValues('rioxxterms.licenseref.uri'); let last = last;">
+            <span>{{uri}}</span>
+            <span *ngIf="!last"> | </span>
+          </ng-container>
+        </div>
+
+        <div class="col-lg-12 mb-3 p-0 item-list-abstract"
+          *ngIf="object.firstMetadataValue('rioxxterms.licenseref.startdate')">
+          <span class="text-secondary  h6">{{'untypeitem.metadata.licensestartdate' | translate}} : </span>
+          <!-- <span class="text-black">{{object.firstMetadataValue('rioxxterms.licenseref.startdate')}}</span> -->
+          <ng-container
+            *ngFor="let startdate of object.allMetadataValues('rioxxterms.licenseref.startdate'); let last = last;">
+            <span>{{startdate}}</span>
+            <span *ngIf="!last"> | </span>
+          </ng-container>
+        </div>
+
+        <div class="col-lg-12 mb-3 p-0 item-list-abstract" *ngIf="object.firstMetadataValue('dcterms.dateAccepted')">
+          <span class="text-secondary  h6">{{'untypeitem.metadata.dateaccepted' | translate}} : </span>
+          <!-- <span class="text-black">{{object.firstMetadataValue('dcterms.dateAccepted')}}</span> -->
+          <ng-container *ngFor="let date of object.allMetadataValues('dcterms.dateAccepted'); let last = last;">
+            <span>{{date}}</span>
+            <span *ngIf="!last"> | </span>
+          </ng-container>
+        </div>
+
+        <div class="col-lg-12 mb-3 p-0 item-list-abstract" *ngIf="object.firstMetadataValue('rioxxterms.version')">
+          <span class="text-secondary  h6">{{'untypeitem.metadata.version' | translate}} : </span>
+          <!-- <span class="text-black">{{object.firstMetadataValue('rioxxterms.version')}}</span> -->
+          <ng-container *ngFor="let version of object.allMetadataValues('rioxxterms.version'); let last = last;">
+            <span>{{version}}</span>
+            <span *ngIf="!last"> | </span>
+          </ng-container>
+        </div>
+
+        <div class="col-lg-12 mb-3 p-0 item-list-abstract"
+          *ngIf="object.firstMetadataValue('rioxxterms.versionofrecord')">
+          <span class="text-secondary  h6">{{'untypeitem.metadata.versionofrecord' | translate}} : </span>
+          <!-- <span class="text-black">{{object.firstMetadataValue('rioxxterms.versionofrecord')}}</span> -->
+          <ng-container
+            *ngFor="let version of object.allMetadataValues('rioxxterms.versionofrecord'); let last = last;">
+            <span>{{version}}</span>
+            <span *ngIf="!last"> | </span>
+          </ng-container>
+        </div>
+
+        <div class="col-lg-12 mb-3 p-0 item-list-abstract" *ngIf="object.firstMetadataValue('refterms.panel')">
+          <span class="text-secondary  h6">{{'untypeitem.metadata.refpanel' | translate}} : </span>
+          <!-- <span class="text-black">{{object.firstMetadataValue('refterms.panel')}}</span> -->
+          <ng-container *ngFor="let panel of object.allMetadataValues('refterms.panel'); let last = last;">
+            <span>{{panel}}</span>
+            <span *ngIf="!last"> | </span>
+          </ng-container>
+        </div>
+
+        <div class="col-lg-12 mb-3 p-0 item-list-abstract"
+          *ngIf="object.firstMetadataValue('dc.description.sponsorship')">
+          <span class="text-secondary  h6">{{'untypeitem.metadata.projectsfounders' | translate}} : </span>
+          <!-- <span class="text-black">{{object.firstMetadataValue('dc.description.sponsorship')}}</span> -->
+          <ng-container
+            *ngFor="let sponsor of object.allMetadataValues('dc.description.sponsorship'); let last = last;">
+            <span>{{sponsor}}</span>
+            <span *ngIf="!last"> | </span>
+          </ng-container>
+        </div>
+
+        <div class="col-lg-12 mb-3 p-0 item-list-abstract" *ngIf="object.firstMetadataValue('dc.relation.youtube')">
+          <span class="text-secondary  h6">{{'untypeitem.metadata.youtube' | translate}} : </span>
+          <!-- <a [href]="object.firstMetadataValue('dc.relation.youtube')">{{object.firstMetadataValue('dc.relation.youtube')}}</a> -->
+          <ng-container *ngFor="let author of object.allMetadataValues('dc.relation.youtube'); let last = last;">
+            <a [href]="author">{{author}}</a>
+            <span *ngIf="!last"> | </span>
+          </ng-container>
+        </div>
+
+        <div class="col-lg-12 mb-3 p-0 item-list-abstract" *ngIf="object.firstMetadataValue('dc.relation.vimeo')">
+          <span class="text-secondary  h6">{{'untypeitem.metadata.vimeo' | translate}} : </span>
+          <!-- <a [href]="object.firstMetadataValue('dc.relation.vimeo')">{{object.firstMetadataValue('dc.relation.vimeo')}}</a> -->
+          <ng-container *ngFor="let author of object.allMetadataValues('dc.relation.vimeo'); let last = last;">
+            <a [href]="author">{{author}}</a>
+            <span *ngIf="!last"> | </span>
+          </ng-container>
+        </div>
+
+        <div class="col-lg-12 mb-3 p-0 item-list-abstract" *ngIf="object.firstMetadataValue('dc.relation.embedded')">
+          <span class="text-secondary  h6">{{'untypeitem.metadata.embedded' | translate}} : </span>
+          <!-- <a [href]="object.firstMetadataValue('dc.relation.embedded')">{{object.firstMetadataValue('dc.relation.embedded')}}</a> -->
+          <ng-container *ngFor="let author of object.allMetadataValues('dc.relation.embedded'); let last = last;">
+            <a [href]="author">{{author}}</a>
+            <span *ngIf="!last"> | </span>
+          </ng-container>
+        </div>
+        <div class="col-lg-12 mb-3 p-0 item-list-abstract" *ngIf="object.firstMetadataValue('dc.identifier.doi')">
+          <span class="text-secondary  h6">{{'untypeitem.metadata.doi' | translate}} : </span>
+          <!-- <span class="text-black">{{object.firstMetadataValue('dc.identifier.doi')}}</span> -->
+          <ng-container *ngFor="let author of object.allMetadataValues('dc.identifier.doi'); let last = last;">
+            <span>{{author}}</span>
+            <span *ngIf="!last"> | </span>
+          </ng-container>
+        </div>
+        <div class="col-lg-12 mb-3 p-0 item-list-abstract" *ngIf="object.firstMetadataValue('dc.identifier.isbn')">
+          <span class="text-secondary  h6">{{'untypeitem.metadata.isbn' | translate}} : </span>
+          <!-- <span class="text-black">{{object.firstMetadataValue('dc.identifier.isbn')}}</span> -->
+          <ng-container *ngFor="let author of object.allMetadataValues('dc.identifier.isbn'); let last = last;">
+            <span>{{author}}</span>
+            <span *ngIf="!last"> | </span>
+          </ng-container>
+        </div>
+        <div class="col-lg-12 mb-3 p-0 item-list-abstract" *ngIf="object.firstMetadataValue('dc.identifier.issn')">
+          <span class="text-secondary  h6">{{'untypeitem.metadata.issn' | translate}} : </span>
+          <!-- <a [href]="object.firstMetadataValue('dc.identifier.doi')" target="_blank">{{object.firstMetadataValue('dc.identifier.issn')}}</a> -->
+          <ng-container *ngFor="let issn of object.allMetadataValues('dc.identifier.issn'); let last = last;">
+            <a [href]="issn" target="_blank">{{issn}}</a>
+            <span *ngIf="!last"> | </span>
+          </ng-container>
+        </div>
+        <div class="col-lg-12 mb-3 p-0 item-list-abstract" *ngIf="object.firstMetadataValue('dc.identifier.other')">
+          <span class="text-secondary  h6">{{'untypeitem.metadata.other' | translate}} : </span>
+          <!-- <span class="text-black">{{object.firstMetadataValue('dc.identifier.other')}}</span> -->
+          <ng-container *ngFor="let author of object.allMetadataValues('dc.identifier.other'); let last = last;">
+            <span>{{author}}</span>
+            <span *ngIf="!last"> | </span>
+          </ng-container>
+        </div>
+        <div class="col-lg-12 mb-3 p-0 item-list-abstract" *ngIf="object.firstMetadataValue('dc.relation.uri')">
+          <span class="text-secondary  h6">{{'untypeitem.metadata.resource' | translate}} : </span>
+          <!-- <a [href]="object.firstMetadataValue('dc.relation.uri')" target="_blank">{{object.firstMetadataValue('dc.relation.uri')}}</a> -->
+          <ng-container *ngFor="let author of object.allMetadataValues('dc.relation.uri'); let last = last;">
+            <a [href]="author" target="_blank">{{author}}</a>
+            <span *ngIf="!last"> | </span>
+          </ng-container>
+        </div>
+        <div class="col-lg-12 mb-3 p-0 item-list-abstract" *ngIf="object.firstMetadataValue('dc.identifier.uri')">
+          <span class="text-secondary  h6">{{'untypeitem.metadata.uri' | translate}} : </span>
+          <!-- <a [href]="object.firstMetadataValue('dc.identifier.uri')" target="_blank">{{object.firstMetadataValue('dc.identifier.uri')}}</a> -->
+          <ng-container *ngFor="let author of object.allMetadataValues('dc.identifier.uri'); let last = last;">
+            <a [href]="author" target="_blank">{{author}}</a>
+            <span *ngIf="!last"> | </span>
+          </ng-container>
+        </div>
+        <div class="col-lg-12 mb-3 p-0 item-list-abstract" *ngIf="object.firstMetadataValue('dc.publisher.place')">
+          <span class="text-secondary  h6">{{'untypeitem.metadata.place' | translate}} : </span>
+          <!-- <span class="text-black">{{object.firstMetadataValue('dc.publisher.place')}}</span> -->
+          <ng-container *ngFor="let author of object.allMetadataValues('dc.publisher.place'); let last = last;">
+            <span>{{author}}</span>
+            <span *ngIf="!last"> | </span>
+          </ng-container>
+        </div>
+        <div class="col-lg-12 mb-3 p-0 item-list-abstract" *ngIf="object.firstMetadataValue('dc.description.degree')">
+          <span class="text-secondary  h6">{{'untypeitem.metadata.thesis' | translate}} : </span>
+          <!-- <span class="text-black">{{object.firstMetadataValue('dc.description.degree')}}</span> -->
+          <ng-container *ngFor="let author of object.allMetadataValues('dc.description.degree'); let last = last;">
+            <span>{{author}}</span>
+            <span *ngIf="!last"> | </span>
+          </ng-container>
+        </div>
+        <div class="col-lg-12 mb-3 p-0 item-list-abstract" *ngIf="object.firstMetadataValue('dc.format.pages')">
+          <span class="text-secondary  h6">{{'untypeitem.metadata.pages' | translate}} : </span>
+          <!-- <a [href]="object.firstMetadataValue('dc.identifier.uri')" target="_blank">{{object.firstMetadataValue('dc.format.pages')}}</a> -->
+          <!-- <span class="text-black">{{object.firstMetadataValue('dc.format.pages')}}</span> -->
+          <ng-container *ngFor="let author of object.allMetadataValues('dc.format.pages'); let last = last;">
+            <span>{{author}}</span>
+            <span *ngIf="!last"> | </span>
+          </ng-container>
+        </div>
+        <div class="col-lg-12 mb-3 p-0 item-list-abstract" *ngIf="object.firstMetadataValue('dc.description.refereed')">
+          <span class="text-secondary  h6">{{'untypeitem.metadata.refereed' | translate}} : </span>
+          <!-- <span class="text-black">{{object.firstMetadataValue('dc.description.refereed')}}</span> -->
+          <ng-container *ngFor="let author of object.allMetadataValues('dc.description.refereed'); let last = last;">
+            <span>{{author}}</span>
+            <span *ngIf="!last"> | </span>
+          </ng-container>
+        </div>
+        <div class="col-lg-12 mb-3 p-0 item-list-abstract" *ngIf="object.firstMetadataValue('dc.subject.other')">
+          <span class="text-secondary  h6">{{'untypeitem.metadata.subject' | translate}} : </span>
+          <ng-container *ngFor="let author of object.allMetadataValues('dc.subject.other'); let last = last;">
+            <span>{{author}}</span>
+            <span *ngIf="!last"> | </span>
+          </ng-container>
+        </div>
+        <div class="col-lg-12 mb-3 p-0 item-list-abstract" *ngIf="object.firstMetadataValue('dc.coverage.spatial')">
+          <span class="text-secondary  h6">{{'untypeitem.metadata.geographical' | translate}} : </span>
+          <ng-container *ngFor="let author of object.allMetadataValues('dc.coverage.spatial'); let last = last;">
+            <span>{{author}}</span>
+            <span *ngIf="!last"> | </span>
+          </ng-container>
+        </div>
+        <div class="col-lg-12 mb-3 p-0 item-list-abstract" *ngIf="object.firstMetadataValue('dc.description.notes')">
+          <span class="text-secondary  h6">{{'untypeitem.metadata.notes' | translate}} : </span>
+          <ng-container *ngFor="let author of object.allMetadataValues('dc.description.notes'); let last = last;">
+            <span>{{author}}</span>
+            <span *ngIf="!last"> | </span>
+          </ng-container>
+        </div>
+        <div class="col-lg-12 mb-3 p-0 item-list-abstract" *ngIf="object.firstMetadataValue('dc.subject.agrovoc')">
+          <span class="text-secondary  h6">{{'untypeitem.metadata.asfa' | translate}} : </span>
+          <ng-container *ngFor="let author of object.allMetadataValues('dc.subject.agrovoc'); let last = last;">
+            <a *ngIf="author.split('[').length==2" [href]="getagrovoclink(author)"
+              target="_blank">{{author.split("[")[0]}} <img style="height: 17px;" src="assets/images/agrovoc.png"></a>
+            <span *ngIf="author.split('[').length==1">{{author}}</span>
+            <span *ngIf="!last"> | </span>
+          </ng-container>
+        </div>
+        <div class="col-lg-12 mb-3 p-0 item-list-abstract" *ngIf="object.firstMetadataValue('dc.description.status')">
+          <span class="text-secondary  h6">{{'untypeitem.metadata.status' | translate}} : </span>
+          <ng-container *ngFor="let author of object.allMetadataValues('dc.description.status'); let last = last;">
+            <span>{{author}}</span>
+            <span *ngIf="!last"> | </span>
+          </ng-container>
+        </div>
+        <ds-item-page-collections class="col-lg-12 mb-3 p-0 item-list-abstract"
+          [item]="object"></ds-item-page-collections>
+
+        <div class="col-lg-12 mb-3 p-0 item-list-abstract mt-3">
+          <a class="btn btn-outline-primary" [routerLink]="[itemPageRoute + '/full']" role="button">
+            <i class="fas fa-info-circle"></i> {{"item.page.link.full" | translate}}
+          </a>
+        </div>
+
+        <div class="col-lg-12 mb-2 p-0 item-list-abstract mt-4"
+          *ngIf="object.firstMetadataValue('dc.rights.uri') && object.firstMetadataValue('dc.rights.uri') !== '-' && object.firstMetadataValue('dc.rights') !== 'No Creative Commons'">
+          <h5>{{'untypeitem.metadata.title' | translate}}</h5>
+          <p>{{'untypeitem.metadata.creative_commons' | translate}}</p>
+          <div class="row">
+            <div class="col-lg-4">
+              <a title="Attribution-NonCommercial-ShareAlike 4.0 International"
+                *ngIf="object.firstMetadataValue('dc.rights')=== 'CC0 (Public Domain)'"
+                alt="Attribution-NonCommercial-ShareAlike 4.0 International"
+                [href]="object.firstMetadataValue('dc.rights.uri')" rel="license"><img class="img-responsive"
+                  [src]="'assets/images/cc-0.png'" style="height: 30px;"
+                  alt="Attribution-NonCommercial-ShareAlike 4.0 International"></a>
+              <a title="Attribution-NonCommercial-ShareAlike 4.0 International"
+                *ngIf="object.firstMetadataValue('dc.rights')=== 'CC BY'"
+                alt="Attribution-NonCommercial-ShareAlike 4.0 International"
+                [href]="object.firstMetadataValue('dc.rights.uri')" rel="license"><img class="img-responsive"
+                  [src]="'assets/images/cc-by.png'" style="height: 30px;"
+                  alt="Attribution-NonCommercial-ShareAlike 4.0 International"></a>
+              <a title="Attribution-NonCommercial-ShareAlike 4.0 International"
+                *ngIf="object.firstMetadataValue('dc.rights')=== 'CC BY-SA'"
+                alt="Attribution-NonCommercial-ShareAlike 4.0 International"
+                [href]="object.firstMetadataValue('dc.rights.uri')" rel="license"><img class="img-responsive"
+                  style="height: 30px;" [src]="'assets/images/cc-by-sa.png'"
+                  alt="Attribution-NonCommercial-ShareAlike 4.0 International"></a>
+              <a title="Attribution-NonCommercial-ShareAlike 4.0 International"
+                *ngIf="object.firstMetadataValue('dc.rights')=== 'CC BY-NC'"
+                alt="Attribution-NonCommercial-ShareAlike 4.0 International"
+                [href]="object.firstMetadataValue('dc.rights.uri')" rel="license"><img class="img-responsive"
+                  style="height: 30px;" [src]="'assets/images/cc-by-nc.png'"
+                  alt="Attribution-NonCommercial-ShareAlike 4.0 International"></a>
+              <a title="Attribution-NonCommercial-ShareAlike 4.0 International"
+                *ngIf="object.firstMetadataValue('dc.rights')=== 'CC BY-NC-SA'"
+                alt="Attribution-NonCommercial-ShareAlike 4.0 International"
+                [href]="object.firstMetadataValue('dc.rights.uri')" rel="license"><img class="img-responsive"
+                  style="height: 30px;" [src]="'assets/images/cc-by-nc-sa.png'"
+                  alt="Attribution-NonCommercial-ShareAlike 4.0 International"></a>
+              <a title="Attribution-NonCommercial-ShareAlike 4.0 International"
+                *ngIf="object.firstMetadataValue('dc.rights')=== 'CC BY-ND'"
+                alt="Attribution-NonCommercial-ShareAlike 4.0 International"
+                [href]="object.firstMetadataValue('dc.rights.uri')" rel="license"><img class="img-responsive"
+                  style="height: 30px;" [src]="'assets/images/cc-by-nd.png'"
+                  alt="Attribution-NonCommercial-ShareAlike 4.0 International"></a>
+              <a title="Attribution-NonCommercial-ShareAlike 4.0 International"
+                *ngIf="object.firstMetadataValue('dc.rights')=== 'CC BY-NC-ND'"
+                alt="Attribution-NonCommercial-ShareAlike 4.0 International"
+                [href]="object.firstMetadataValue('dc.rights.uri')" rel="license"><img class="img-responsive"
+                  style="height: 30px;" [src]="'assets/images/cc-by-nc-nd.png'"
+                  alt="Attribution-NonCommercial-ShareAlike 4.0 International"></a>
+            </div>
+            <div class="col-lg-8">
+              <span>{{'untypeitem.metadata.license_description' | translate}}
+                <ng-container *ngFor="let author of object.allMetadataValues('dc.rights.uri'); let last = last;">
+                  <a [href]="author" target="_blank">{{author}}</a>
+                  <span *ngIf="!last"> | </span>
+                </ng-container>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- <div class="col-xs-12 col-md-8 mt-4 top-header-card" style="margin-left: 10px;">
+      <div style="margin-top: 12px;margin-bottom: 12px;">
+        <h3><b>More Detail</b></h3>
+        <ds-item-page-abstract-field [item]="object"></ds-item-page-abstract-field>
+        <ds-generic-item-page-field [item]="object" [fields]="['dc.description']" [label]="'item.page.description'">
+        </ds-generic-item-page-field>
+
+        <ds-generic-item-page-field [item]="object" [fields]="['dc.subject']" [separator]="', '"
+          [label]="'item.page.subject'">
+        </ds-generic-item-page-field>
+        <ds-generic-item-page-field [item]="object" [fields]="['dc.identifier.citation']"
+          [label]="'item.page.citation'">
+        </ds-generic-item-page-field>
+        @if (geospatialItemPageFieldsEnabled) {
+        <ds-geospatial-item-page-field [item]="object" [label]="'item.page.places'" [pointFields]="['dcterms.spatial']"
+          [bboxFields]="['dcterms.spatial']" [cluster]="true">
+        </ds-geospatial-item-page-field>
+        }
+        <ds-item-page-uri-field [item]="object" [fields]="['dc.identifier.uri']" [label]="'item.page.uri'">
+        </ds-item-page-uri-field>
+        <ds-item-page-collections [item]="object"></ds-item-page-collections>
+        <ds-item-page-uri-field [item]="object" [fields]="['coar.notify.endorsedBy']" [label]="'item.page.endorsement'">
+        </ds-item-page-uri-field>
+        <ds-item-page-uri-field [item]="object" [fields]="['datacite.relation.isReviewedBy']"
+          [label]="'item.page.review'">
+        </ds-item-page-uri-field>
+        <ds-item-page-uri-field [item]="object" [fields]="['datacite.relation.isSupplementedBy']"
+          [label]="'item.page.supplemented'">
+        </ds-item-page-uri-field>
+        <ds-item-page-uri-field [item]="object" [fields]="['datacite.relation.isReferencedBy']"
+          [label]="'item.page.referenced'">
+        </ds-item-page-uri-field>
+        <ds-metadata-representation-list class="ds-item-page-mixed-author-field" [parentItem]="object"
+          [itemType]="'Person'" [metadataFields]="['dc.contributor.author', 'dc.creator']"
+          [label]="'item.page.authors' | translate">
+        </ds-metadata-representation-list>
+        <ds-generic-item-page-field [item]="object" [fields]="['journal.title']" [label]="'item.page.journal-title'">
+        </ds-generic-item-page-field>
+        <ds-generic-item-page-field [item]="object" [fields]="['journal.identifier.issn']"
+          [label]="'item.page.journal-issn'">
+        </ds-generic-item-page-field>
+        <ds-generic-item-page-field [item]="object" [fields]="['journalvolume.identifier.name']"
+          [label]="'item.page.volume-title'">
+        </ds-generic-item-page-field>
+        <ds-generic-item-page-field [item]="object" [fields]="['dc.publisher']" [label]="'item.page.publisher'">
+        </ds-generic-item-page-field>
+        <ds-item-page-cc-license-field [item]="object" [variant]="'full'">
+        </ds-item-page-cc-license-field>
+        <div>
+          <a class="btn btn-outline-primary" [routerLink]="[itemPageRoute + '/full']" role="button" role="button"
+            tabindex="0">
+            <i class="fas fa-info-circle"></i> {{"item.page.link.full" | translate}}
+          </a>
+        </div>
+      </div>
+    </div> -->
+  </div>
+</div>
+@if(allowCommenting){
+  <div #commentsSection>
+  <div class="row bg-white mt-3 comments-actions">
+    <div class="container-fluid bg-white pb-3">
+      <form [formGroup]="CommentFormGroup">
+        <div class="row mb-2">
+          <div class="col-lg-12 p-3">
+            <span class="text-primary h4 ">{{'untypeitem.metadata.commentstitle' | translate}} </span>
+            <span class="text-primary">{{'untypeitem.metadata.subtitle' | translate}}</span>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-12 col-md-9 col-lg-10">
+            <input type="text" value="" formControlName="comments" class="form-control"
+              placeholder="{{'untypeitem.metadata.placeholder' | translate}}">
+          </div>
+          <div class="col-12 col-md-3 col-lg-2 mt-2 m-md-0 px-2">
+            <button (click)="savecomment()" [disabled]="CommentFormGroup.invalid"
+              class="form-control subBtn btn btn-primary text-center">
+              <p class="m-0">{{'untypeitem.metadata.add_comment' | translate}}</p>
+              <!-- <i class="fa fa-plus-circle ms-2"> </i> -->
+            </button>
+          </div>
+        </div>
+      </form>
+        <ds-pagination 
+        *ngIf="(pageInfoState$ | async)?.totalElements > 0 && !loder" 
+        [paginationOptions]="config"
+        (pageChange)="onPageChange($event)" 
+        (pageSizeChange)="onPageSizeChange($event)"
+        [collectionSize]="(pageInfoState$ | async)?.totalElements" 
+        [hideGear]="true" 
+        [hidePagerWhenSinglePage]="true"
+        [hidePaginationDetail]="true"
+        style="width:100%">
+          <div class="row mt-3 " *ngFor="let commentobj of (comment$ | async)?.page; let i=index;">
+            <ng-container *ngIf="commentobj.status!=3">
+            </ng-container>
+            <div class="col-lg-12 border-top">
+              <p class="mt-2">{{commentobj.comment}}</p>
+            </div>
+            <div class="col-lg-12 text-primary" style=" text-align: right;">
+              <span>
+                {{commentobj.submitterRest.metadata['eperson.firstname'][0].value+'
+                '+commentobj.submitterRest.metadata['eperson.lastname'][0].value}} {{'untypeitem.metadata.added_by' |
+                translate}} {{commentobj.actiondate|date:'yyyy-MM-dd HH:mm:ss'}} 
+              </span> 
+              <a style="cursor: pointer;"
+                *ngIf="isAuthorized$ | async" (click)="flagComment(commentobj)"> |
+                {{'untypeitem.metadata.flag_comment' | translate}}
+              </a>
+            </div>
+          </div>
+        </ds-pagination>
+    </div>
+  </div>
+  </div>
+}
+<div class="mb-3">
+<div class="row bg-white mt-3 comments-actions">
+  <div class="container-fluid bg-white pb-3">
+    <div class="row align-items-center" style="margin-left: 0px!important;margin-right: 0px!important;">
+      <div class="col-md-6 col-sm-12">
+        <div class="row mb-2">
+          <div class="col-lg-12 p-3">
+            <span class="text-primary h4 ">{{'untypeitem.metadata.itemanalyticstitle' | translate}}</span>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6 col-sm-12 text-md-end mt-3">
+        <div class="d-flex align-items-center justify-content-md-end">
+          <div class="btn-fliter">
+            <button [class]="dateType === 0 ? 'enabledbutton':''" (click)="buttonClick(0)">{{'home.label.week' |
+              translate}}</button>
+            <span class="line"></span>
+            <button [class]="dateType === 1 ? 'enabledbutton':''" (click)="buttonClick(1)">{{'home.label.month' |
+              translate}}</button>
+            <span class="line"></span>
+            <button [class]="dateType === 2 ? 'enabledbutton':''" (click)="buttonClick(2)">{{'home.label.year' |
+              translate}}</button>
+            <span class="line"></span>
+            <button [class]="dateType === 3 ? 'enabledbutton':''" (click)="buttonClick(3)">{{'home.label.alltime' |
+              translate}}</button>
+          </div>
+          <div>
+            <ng-template #htmlContent>
+              <div>
+                <p>{{'home.label.weekinfo' | translate}}</p>
+                <p>{{'home.label.monthinfo' | translate}}</p>
+                <p>{{'home.label.yearinfo' | translate}}</p>
+                <p>{{'home.label.alltimeinfo' | translate}}</p>
+              </div>
+            </ng-template>
+            <span class="ms-2"><i class="fas fa-info-circle"></i></span>
+          </div>
+        </div>
+        <div class="chart-heading mt-2">
+          <p class="description">{{'home.label.desireperiod' | translate}}</p>
+        </div>
+      </div>
+    </div>
+    <div class="row" style="margin-left: 0px!important;margin-right: 0px!important;">
+      <div class="col-md-5 col-sm-12 align-items-center">
+        <div style="max-height: 300px;">
+          <ngx-charts-line-chart *ngIf="!isLoading" [scheme]="colorScheme" [legend]="legend"
+            [showXAxisLabel]="showXAxisLabel" [showYAxisLabel]="showYAxisLabel" [xAxis]="xAxis" [yAxis]="yAxis"
+            [xAxisLabel]="xAxisLabel" [yAxisLabel]="yAxisLabel" [timeline]="timeline" [results]="chartOptions"
+            [legendPosition]="legendPosition" [showGridLines]="false">
+          </ngx-charts-line-chart>
+        </div>
+        <div class="d-flex justify-content-center align-items-center" style="min-height: 450px;" *ngIf="!!isLoading">
+          <div class="spinner-border" role="status">
+            <span class="sr-only">{{'home.label.loading' | translate}}</span>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-7 col-sm-12 align-items-center" style="margin-top: 20px;">
+        <div class="d-flex justify-content-center align-items-center" style="min-height: 450px;" *ngIf="!!isLoading2">
+          <div class="spinner-border" role="status">
+            <span class="sr-only">{{'home.label.loading' | translate}}</span>
+          </div>
+        </div>
+        <!-- [categoryColorMap]="categoryColorMap" 
+        [customLegendItems]="customLegendItems" -->
+        <ds-display-map 
+          [dateType]="dateType" 
+          [itemId]="itemId" 
+          [id]="'mapContainer1'" 
+          [plotData]="plotsData">
+        </ds-display-map>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+</div>
+<ng-template #content let-modal></ng-template>

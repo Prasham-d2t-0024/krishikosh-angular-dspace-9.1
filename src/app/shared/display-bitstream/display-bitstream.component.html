@@ -1,0 +1,76 @@
+<div class="container-fluid p-0">
+  <div class="row m-0 mt-2">
+
+    <!-- Left Sidebar -->
+    @if (leftOpen) {
+      <div class="col-3" [@slideInOut]>
+        <ul ngbNav #nav="ngbNav" (navChange)="onNavChange($event)" [(activeId)]="active" class="nav-tabs">
+          
+          <!-- Tab 1: Properties -->
+          <li [ngbNavItem]="1">
+            <a ngbNavLink>Properties</a>
+            <ng-template ngbNavContent>
+              <ds-show-item-metadata [itemTab]="itemTab"></ds-show-item-metadata>
+            </ng-template>
+          </li>
+
+          <!-- Tab 2: List of Files -->
+          <li [ngbNavItem]="2" style="height: 100%;">
+            <a ngbNavLink>List of Files</a>
+          <ng-template ngbNavContent>
+            @if ((originals$ | async)?.payload) {
+            @let originals = (originals$ | async)?.payload;
+            <div style="height: 78vh;">
+              @for (file of originals?.page; track file; let i = $index) {
+              <div class="">
+                <div class="col-12 d-flex" style="justify-content: space-between;">
+                  <a style="cursor: pointer;" (click)="showpdf(file)" target="_blank">
+                    <span class="slash text-black">{{ i + 1 }}. {{ dsoNameService.getName(file) }}</span>
+                  </a>
+                  <a style="cursor: pointer;" (click)="downloadPdf(file)" title="Download File">
+                    <i class="fa fa-download text-primary" aria-hidden="true"></i>
+                  </a>
+                </div>
+              </div>
+              }
+            </div>
+            }
+          </ng-template>
+
+          </li>
+
+        </ul>
+
+        <div [ngbNavOutlet]="nav" class="bg-white p-2"></div>
+
+        <div class="d-flex align-items-end flex-column">
+          @if (leftOpen) {
+            <img (click)="fullleftC()" class="leftArrow cursor" src="assets/dsquareIcon/leftArrow.png" alt="" />
+          }
+        </div>
+      </div>
+    }
+
+    <!-- Right Content -->
+    <div class="mb-2" [ngClass]="{'col-9': leftOpen,'col-12': !leftOpen}">
+      @if (!leftOpen) {
+        <img (click)="fullleftC()" class="leftFull cursor" src="assets/dsquareIcon/rightFull.png" alt="" />
+      }
+      <div class="body">
+        <ng-container>
+          <div style="width: 100%; height: 88vh">
+            <ng2-pdfjs-viewer #pdfViewer
+              [download]="false"
+              [print]="false"
+              [openFile]="false"
+              [fullScreen]="false"
+              [viewBookmark]="false"
+              [showSpinner]="true"
+              downloadFileName="currentFileViewing">
+            </ng2-pdfjs-viewer>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+</div>

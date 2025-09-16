@@ -1,0 +1,75 @@
+<footer>
+  @if (showTopFooter) {
+    <div class="top-footer">
+      <!-- Grid container -->
+           <!-- Copyright -->
+  <div class="bottom-footer p-1 d-flex flex-column flex-md-row justify-content-center align-items-center text-white">
+    <div class="content-container align-self-center">
+      <p class="m-0 copy-rights"  [innerHTML]="'footer.link.dspace' | translate"></p>
+      <ul class="footer-info list-unstyled d-flex justify-content-center mb-0">
+        @if (showCookieSettings) {
+        <li>
+          <button class="btn btn-link text-white" type="button" (click)="openCookieSettings()" role="button" tabindex="0">
+            {{ 'footer.link.cookies' | translate}}
+          </button>
+        </li>
+        }
+        <li>
+          <a class="btn text-white"
+             routerLink="info/accessibility" role="link" tabindex="0">{{ 'footer.link.accessibility' | translate }}</a>
+        </li>
+        @if (showPrivacyPolicy) {
+          <li>
+            <a class="btn text-white"
+            routerLink="info/privacy" role="link" tabindex="0">{{ 'footer.link.privacy-policy' | translate}}</a>
+          </li>
+        }
+        @if (showEndUserAgreement) {
+          <li>
+            <a class="btn text-white"
+            routerLink="info/end-user-agreement" [queryParams]="{ source: 'footer' }" role="link" tabindex="0">{{ 'footer.link.end-user-agreement' | translate}}</a>
+          </li>
+        }
+        @if (showSendFeedback$ | async) {
+          <li>
+            <a class="btn text-white"
+            routerLink="info/feedback" role="link" tabindex="0">{{ 'footer.link.feedback' | translate}}</a>
+          </li>
+        }
+      </ul>
+    </div>
+    @if (coarLdnEnabled$ | async) {
+      <div class="notify-enabled text-white align-self-end">
+        <a class="coar-notify-support-route" routerLink="info/coar-notify-support" role="link" tabindex="0">
+          <img class="n-coar" src="assets/images/n-coar.svg" [attr.alt]="'menu.header.image.logo' | translate" />
+          {{ 'footer.link.coar-notify-support' | translate }}
+        </a>
+      </div>
+    }
+  </div>
+    </div>
+  }
+  <!-- Grid container -->
+
+  <!-- Copyright -->
+
+  <div class="bottom-footer p-2 d-flex justify-content-between align-items-center text-white">
+        <h6 class="footertext">
+          <a class="text-white" href="https://new.d2t.co/services/service-detail/knowledge-hub-on-dspace">
+            Knowledge Hub
+          </a>
+          on Dspace by
+          <a class="text-white" href="https://new.d2t.co/">
+            DSquare Technologies
+          </a>
+        </h6>
+        <h6 class="footertext">
+          Powered by 
+          <a class="text-white" href="https://dspace.org/">
+            Dspace
+          </a>
+        </h6>
+  
+  </div>
+  <!-- Copyright -->
+</footer>

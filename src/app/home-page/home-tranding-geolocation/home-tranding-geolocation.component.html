@@ -1,0 +1,140 @@
+<div class="row align-items-center bg-white"
+  style="margin-left: 0px!important;margin-right: 0px!important;background-color: #f2f2f2;">
+  <div class="col-md-6 col-sm-12 bg-white" style="min-height: 93px;">
+    <div class="chart-heading">
+      <p class="title">{{'home.label.trendinggeolocations' | translate}}</p>
+      <p class="description">{{'home.label.bubbleinstruction' | translate}}</p>
+    </div>
+  </div>
+  <div class="col-md-6 col-sm-12 text-md-end bg-white">
+    <div class="d-flex align-items-center justify-content-md-end header-title">
+      @if (isAdmin$ | async) {
+      <i class="fa fa-download me-2" style="cursor: pointer;" title="Download Excel" (click)="downloadExcel()"
+        aria-hidden="true">
+      </i>
+      }
+      <div class="btn-fliter">
+        <button [class]="i === 0 ? 'enabledbutton':''" (click)="buttonClick(0)">{{'home.label.week' |
+          translate}}</button>
+        <span class="line"></span>
+        <button [class]="i === 1 ? 'enabledbutton':''" (click)="buttonClick(1)">{{'home.label.month' |
+          translate}}</button>
+        <span class="line"></span>
+        <button [class]="i === 2 ? 'enabledbutton':''" (click)="buttonClick(2)">{{'home.label.year' |
+          translate}}</button>
+        <span class="line"></span>
+        <button [class]="i === 3 ? 'enabledbutton':''" (click)="buttonClick(3)">{{'home.label.alltime' |
+          translate}}</button>
+      </div>
+      <div>
+        <ng-template #htmlContent>
+          <div>
+            <p>{{'home.label.weekinfo' | translate}}</p>
+            <p>{{'home.label.monthinfo' | translate}}</p>
+            <p>{{'home.label.yearinfo' | translate}}</p>
+            <p>{{'home.label.alltimeinfo' | translate}}</p>
+          </div>
+        </ng-template>
+        <span [ngbTooltip]="htmlContent" class="ms-2"><i class="fas fa-info-circle"></i></span>
+      </div>
+    </div>
+    <div class="chart-heading mt-2">
+      <p class="description">{{'home.label.desireperiod' | translate}}</p>
+    </div>
+  </div>
+  <div class="col-md-7 col-sm-12 ">
+    <div class="col-12">
+      @if (isLoading) {
+      <div class="d-flex justify-content-center align-items-center" style="min-height: 450px;">
+        <div class="spinner-border" role="status">
+          <span class="sr-only">{{'home.label.loading' | translate}}</span>
+        </div>
+      </div>
+      }@else if(!isLoading && plotsData && areaData) {
+        <!-- [categoryColorMap]="categoryColorMap" [customLegendItems]="customLegendItems" -->
+      <ds-display-map  
+        [dateType]="i"
+        [itemId]="collectionorCommunityId" 
+        [id]="'mapContainer3'" 
+        [plotData]="plotsData" 
+        [showLegends]="true"
+        [areaData]="areaData">
+      </ds-display-map>
+      }
+    </div>
+  </div>
+  <div class="col-md-5 col-sm-12">
+    <div class="col-12">
+      <div class="table-responsive  trendingGeolocations geo-table bg-white m-2 p-2">
+        <div class="col-12">
+          <div class="d-flex align-items-center justify-content-between title-fliter">
+            <div class="title h6">{{selectedCountry}}</div>
+            <div class="filter">
+              <div ngbDropdown class="d-inline-block">
+                <button type="button" class="btn filter-dropdown" style="box-shadow: none!important;"
+                  id="dropdownBasic1" ngbDropdownToggle><i class="fas fa-filter"></i></button>
+                <div ngbDropdownMenu aria-labelledby="dropdownBasic1" [style.max-height.px]="300"
+                  style="overflow-y: auto;">
+                  <button (click)="onSelect('All Countries')" ngbDropdownItem>{{'home.label.allcountries' |
+                    translate}}</button>
+                  <button *ngFor="let item of countryData" (click)="onSelect(item)" ngbDropdownItem>
+                    {{ item }}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-12 d-flex text-center chart-data mb-2">
+          <div class="col-4 text-center chart-data" style="border-right:1px solid grey;">
+            <div><i class="far fa-eye me-1"></i></div>
+            <div><span><b>{{totalView}}</b></span></div>
+            <div><span><b>{{'statistics.table.header.views' | translate}}</b></span></div>
+          </div>
+          <div class="col-4 text-center chart-data" style="border-right:1px solid grey;">
+            <div><i class="fas fa-download me-1"></i></div>
+            <div><span><b>{{totalDownload}}</b></span></div>
+            <div><span><b>{{'home.label.downloads' | translate}}</b></span></div>
+          </div>
+          <div class="col-4 text-center chart-data">
+            <div><i class="fas fa-search me-1"></i></div>
+            <div><span><b>{{totalSearches}}</b></span></div>
+            <div><span><b>{{'home.label.searches' | translate}}</b></span></div>
+          </div>
+        </div>
+        <div class="col-12 mb-3">
+          <div class="table-wrapper">
+            @if (isLoading1) {
+            <div class="d-flex justify-content-center align-items-center">
+              <div class="spinner-border" role="status">
+                <span class="visually-hidden">{{'home.label.loading' | translate}}</span>
+              </div>
+            </div>
+            }
+            @if (!isLoading1) {
+            <table class="table table-bordered table-sm" style="text-align: center;">
+              <thead>
+                <tr>
+                  <th scope="col">{{'home.label.cities' | translate}}</th>
+                  <th scope="col"><i class="far fa-eye me-1"></i>{{'statistics.table.header.views' | translate}}</th>
+                  <th scope="col"><i class="fas fa-download me-1"></i>{{'home.label.downloads' | translate}}</th>
+                  <th scope="col"><i class="fas fa-search me-1"></i>{{'home.label.searches' | translate}}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let item of subtableData; let i = index;">
+                  <td style="text-align: center;">{{item.contry}}</td>
+                  <td style="text-align: center;">{{item.view}}</td>
+                  <td style="text-align: center;">{{item.download}}</td>
+                  <td style="text-align: center;">{{item.search}}</td>
+                </tr>
+              </tbody>
+            </table>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<hr>

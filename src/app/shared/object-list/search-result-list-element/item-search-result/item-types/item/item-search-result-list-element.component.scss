@@ -1,0 +1,192 @@
+@import '../../../../../../../styles/variables';
+
+.item-list-supervision {
+  a {
+    cursor: pointer;
+  }
+}
+
+.image-logo {
+  margin-top: 10px;
+}
+
+.item-card {
+  background-color: white;
+  margin-top: 10px;
+  border-radius: 0px;
+}
+
+.bottem-count-text ul {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 0;
+  margin: 0;
+}
+
+.bottem-count-text ul li {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  list-style: none;
+  padding: 5px;
+  text-decoration: none;
+  width: 100%;
+}
+
+.arrowhide::after {
+  display: none;
+}
+
+.bottem-count-text ul li img {
+  width: 28px !important;
+  margin-right: 4px;
+}
+
+.bottem-count-text ul li span {
+  font-size: var(--ds-font-size-base);
+  font-weight: 600;
+  color: #978f8f;
+  margin-left: 5%;
+}
+
+.font-wight-info {
+  font-weight: 600;
+}
+
+.listDropdown-left-menu {
+  font-size: 14px;
+  left: auto !important;
+  min-width: auto;
+  opacity: 0;
+  padding: 0;
+  right: 0;
+  top: 20px !important;
+  transform: none !important;
+  transition: all .6s;
+  will-change: auto !important;
+
+  &.show {
+    opacity: 1;
+  }
+
+  .dropdown-item {
+    padding: 6px 12px;
+  }
+
+  .fab {
+    width: 15px;
+  }
+}
+
+::ng-deep .data-card,
+.data-card {
+  background-color: white;
+  // box-shadow: 0px 1px 5px 0 #ccc;
+  min-height: 150px;
+  transition: all .5s;
+
+  &:hover {
+    // box-shadow: 0px 2px 5px 1px #9e9e9e;
+  }
+
+  @media screen and (max-width: map-get($grid-breakpoints, sm)) {
+    height: auto !important;
+
+    .img-col {
+      margin-bottom: 5px;
+    }
+  }
+
+  @media screen and (min-width: map-get($grid-breakpoints, sm)) and (max-width: 767px) and (orientation :landscape) {
+    height: auto !important;
+  }
+
+  .thumbnail-img {
+    justify-content: flex-start;
+  }
+}
+
+.shareActions {
+  :after {
+    margin-left: 5px;
+  }
+}
+
+.main-div {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.key {
+  font-weight: bold;
+}
+
+.value {
+  flex-grow: 1;
+  margin-left: 10px;
+  display: inline;
+  word-break: break-all;
+}
+
+.value div,
+.value i {
+  display: inline;
+}
+
+.citation-label {
+  display: inline-block;
+  vertical-align: top;
+  /* Keeps the label at the top */
+  margin-right: 5px;
+  /* Adds some space between 'Citation :' and the title */
+}
+
+.dso-title {
+  display: inline-block;
+  max-width: 90%;
+  /* Adjust as needed to control wrapping */
+  vertical-align: top;
+  word-wrap: break-word;
+  /* Ensures proper line breaks */
+}
+
+.border {
+  border: 1px solid #dee2e6 !important;
+}
+
+.dont-break-out {
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  -ms-word-break: break-all;
+  word-break: break-all;
+  word-break: break-word;
+  -webkit-hyphens: auto;
+  hyphens: auto;
+}
+
+.modal.show .modal-dialog {
+  max-width: 75vw;
+}
+
+@media screen and (max-width:576px) {
+  .modal.show .modal-dialog {
+    max-width: 100vw;
+  }
+}
+
+@media screen and (max-width:576px) {
+  .action-badge {
+    display: flex;
+    flex-direction: column-reverse;
+  }
+
+  .action-badge>div {
+    width: 100%;
+  }
+
+  .action-panel {
+    justify-content: center !important;
+  }
+}

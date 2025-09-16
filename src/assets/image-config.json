@@ -1,0 +1,23 @@
+{
+    "homePageLayoutConfig": {
+        "showBanner": true,
+        "showCarousel": true
+    },
+    "images": {
+        "logo": "assets/images/UPSC_logo.png",
+        "favicon": "assets/dspace/images/favicons/favicon.ico",
+        "homepage": "assets/images/UPSC_home_page.jpg",
+        "login": "assets/images/UPSC_logo.png"
+    },
+    "imageSizes": {
+        "logo": {
+            "width": "142px",
+            "height": "95px"
+        },
+        "homepage": {
+            "width": "100vw",
+            "height": "60vh",
+            "searchBarDistanceFromTop": "8vh"
+        }
+    }
+}

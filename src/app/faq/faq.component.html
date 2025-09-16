@@ -1,0 +1,24 @@
+<div class="container faq-container">
+    <div class="row">
+        <div class="col-12 mx-auto middleside">
+            <div class="mt-4 centered-content">
+                <h4 class="text-primary mb-4"><b>{{'faq.label.main' | translate}}</b></h4>
+                <div class="container">
+                    <div class="row">
+                        <div class="col-12 col-md-12 pl-md-0 pr-md-3 p-0">
+                            @for (item of faq; track item) {
+                            <div class="mt-4">
+                                <h6><b>{{ item.question }}</b></h6>
+                                <div>
+                                    <div [innerHTML]="getSanitizedHtml(item.answers)"></div>
+                                </div>
+                            </div>
+                            }
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

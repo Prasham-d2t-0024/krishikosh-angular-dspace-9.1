@@ -1,0 +1,17 @@
+<div class="row item-card"
+style="margin-left: 0px!important;margin-right: 0px!important;padding-bottom: 0px!important;padding-left: 0px!important;">
+  <div [ngClass]="showThumbnails ? 'col-9 offset-3 offset-md-2' : 'col-md-12'">
+    @if (showLabel) {
+      <ds-badges [object]="dso" [context]="context"></ds-badges>
+    }
+    @if (linkType !== linkTypes.None) {
+      <a [target]="(linkType === linkTypes.ExternalLink) ? '_blank' : '_self'" [attr.rel]="(linkType === linkTypes.ExternalLink) ? 'noopener noreferrer' : null"  [routerLink]="['/communities/' + dso.id]" class="lead" [innerHTML]="dsoTitle"></a>
+    }
+    @if (linkType === linkTypes.None) {
+      <span class="lead" [innerHTML]="dsoTitle"></span>
+    }
+    @if (dso.shortDescription) {
+      <div class="text-muted abstract-text" [innerHTML]="firstMetadataValue('dc.description.abstract')"></div>
+    }
+  </div>
+</div>

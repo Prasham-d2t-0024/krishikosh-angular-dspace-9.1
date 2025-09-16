@@ -1,0 +1,148 @@
+<div class="container my-4">
+  <div class="row">
+    <div class="col-12">
+         <!-- Page Title -->
+      <h4 class="text-primary fw-bold mb-4">
+        {{'faq.page.title' | translate}}
+      </h4>
+      <div class="card shadow-sm bg-white rounded-3 p-4">
+        
+        <!-- Question -->
+        <div class="mb-4">
+          <label class="form-label fw-semibold">{{'faq.label.question' | translate}}</label>
+          <input #questionInput class="form-control" placeholder="Enter Question" [(ngModel)]="question" />
+        </div>
+
+        <!-- Answer -->
+        <div class="mb-4">
+          <label class="form-label fw-semibold">{{'faq.label.answer' | translate}}</label>
+          <!-- <textarea class="form-control" rows="10" placeholder="Enter Answer" [(ngModel)]="answer"></textarea> -->
+          <angular-editor class="editor" [config]="editorConfig" [(ngModel)]="answer"></angular-editor>
+        </div>
+
+        <!-- Add Mode -->
+         @if(!isEdit) {
+        <div class="d-flex justify-content-end">
+          <button class="btn btn-primary" (click)="submit()">
+            {{'search.filters.search.submit' | translate}}
+          </button>
+        </div>
+        }
+        <!-- Edit Mode -->
+         @if(!!isEdit) {
+        <div class="d-flex justify-content-end">
+          <button type="button" class="btn btn-light me-2" (click)="cancel()" style="width: 80px;">
+            {{'submission.general.cancel' | translate}}
+          </button>
+          <button class="btn btn-primary" (click)="updateFAQ()">
+            {{'faq.label.update' | translate}}
+          </button>
+        </div>
+        }
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container mb-5">
+  <div class="col-12">
+    <div class="card shadow-sm bg-white rounded-3">
+      <div class="card-header bg-primary text-white fs-5 fw-semibold">
+        {{'home.recent-submissions.head' | translate}}
+      </div>
+
+      <div class="card-body overflow-hidden"
+           cdkDropList
+           #faqList="cdkDropList"
+           [cdkDropListData]="(faq | async)?.payload?.page"
+           (cdkDropListDropped)="drop($event)">
+        
+        <p class="text-muted">{{'faq.label.instruction' | translate}}</p>
+
+        @if((faq | async)?.payload?.totalElements > 0) {
+        <ds-pagination [paginationOptions]="pageConfig" [collectionSize]="(faq | async)?.payload?.totalElements"
+            [hideGear]="true" [hidePagerWhenSinglePage]="true">
+        
+            <!-- Table Header -->
+            <div class="row fw-bold border-bottom pb-2 mb-2">
+                <div class="col-1"></div>
+                <div class="col-3">{{'faq.label.question' | translate}}</div>
+                <div class="col-7">{{'faq.label.answer' | translate}}</div>
+                <div class="col-1">{{'subscriptions.table.action' | translate}}</div>
+            </div>
+        
+            <!-- Table Rows -->
+            @for(item of (faq | async)?.payload?.page; track $index) {
+            <div class="row align-items-center py-2 border-bottom" cdkDrag [cdkDragData]="item">
+        
+                <!-- Drag Handle -->
+                <div class="col-1 text-center text-muted" style="cursor: move;">
+                    <i class="fas fa-grip-vertical"></i>
+                </div>
+        
+                <!-- Question -->
+                <div class="col-3">
+                    @if(!item.isEdit) {
+                    <span>{{item.question}}</span>
+                    } @else {
+                    <input class="form-control" [(ngModel)]="item.question" />
+                    }
+                </div>
+        
+                <!-- Answer -->
+                <div class="col-7">
+                    @if(!item.isEdit) {
+                    <span [innerHTML]="item.answers"></span>
+                    } @else {
+                    <textarea class="form-control" [(ngModel)]="item.answers" rows="3"></textarea>
+                    }
+                </div>
+        
+                <!-- Actions -->
+                <div class="col-1">
+                    @if(!item.isEdit) {
+                    <div class="d-flex justify-content-center">
+                        <a class="me-2 text-decoration-none text-primary" style="cursor: pointer;">
+                            <i class="fa fa-pencil" aria-hidden="true" (click)="editMasterValue(item)"></i>
+                        </a>
+                        <a class="text-decoration-none text-danger" style="cursor: pointer;">
+                            <i class="fa fa-trash" aria-hidden="true" (click)="deleteMasterValue(item,content)"></i>
+                        </a>
+                    </div>
+                    } @else {
+                    <div class="d-flex justify-content-center">
+                        <button type="button" class="btn btn-success btn-sm me-2" (click)="updateFAQ()">{{'faq.label.update' |
+                            translate}}</button>
+                        <button type="button" class="btn btn-light btn-sm" (click)="cancel()">{{'access-control-cancel' |
+                            translate}}</button>
+                    </div>
+                    }
+                </div>
+        
+            </div>
+            }
+        </ds-pagination>
+        }
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<ng-template #content let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <h4 class="modal-title text-danger">{{'faq.label.popup.deleteheader' | translate}}</h4>
+        <button type="button" id="delete_close" class="btn btn-light" aria-label="Close" (click)="d('cancel')">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <p>{{'faq.label.popup.deleteask' | translate}}</p>
+    </div>
+    <div class="modal-footer">
+        <button type="button" id="delete_cancel" class="btn btn-secondary"
+            (click)="c('cancel')">{{'submission.general.discard.confirm.cancel' | translate}}</button>
+        <button type="button" id="delete_confirm" class="btn btn-danger"
+            (click)="c('ok')">{{'submission.general.discard.confirm.submit' | translate}}</button>
+    </div>
+</ng-template>

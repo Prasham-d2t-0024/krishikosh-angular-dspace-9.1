@@ -1,0 +1,611 @@
+@if(itemTab) {
+<div class="col-12" style="max-height: 77vh;overflow-y: auto;overflow-x: auto;">
+    @if(itemTab.firstMetadataValue('dc.title')) {
+    <div class="row mb-2 p-0 item-list-abstract">
+        <span class="text-secondary h6">{{'untypeitem.metadata.maintitle' | translate}} : </span>
+        @for(title of itemTab.allMetadataValues('dc.title'); track title; let last = $last) {
+        <span class="col-lg-12 slash text-black">{{ title }}</span>
+        @if(!last) { <span> | </span> }
+        }
+    </div>
+    }
+
+    @if(itemTab.firstMetadataValue('dc.contributor.author')) {
+    <div class="col-lg-12 mb-2 p-0">
+        <span class="text-secondary h6">{{'untypeitem.metadata.authors' | translate}} : </span>
+        @for(author of itemTab.allMetadataValues('dc.contributor.author'); track author; let last = $last) {
+        <a [routerLink]="['/search']" [queryParams]="{'f.author':author+',equals'}">{{author}}</a>
+        @if(!last) { <span> | </span> }
+        }
+    </div>
+    }
+    <!-- Editors -->
+    @if (itemTab.firstMetadataValue('dc.contributor.editor')) {
+    <div class="col-lg-12 mb-3 p-0">
+        <span class="text-secondary h6">{{'untypeitem.metadata.editors' | translate}}: </span>
+        @for (editor of itemTab.allMetadataValues('dc.contributor.editor'); track editor; let last = $last) {
+        <span class="text-black">{{ editor }}</span>
+        @if (!last) { <span> | </span> }
+        }
+    </div>
+    }
+
+    <!-- Corporate Author -->
+    @if (itemTab.firstMetadataValue('dc.contributor.corpauthor')) {
+    <div class="col-lg-12 mb-3 p-0">
+        <span class="text-secondary h6">{{'untypeitem.metadata.corporateauthor' | translate}} : </span>
+        @for (author of itemTab.allMetadataValues('dc.contributor.corpauthor'); track author; let last = $last) {
+        <span class="text-black">{{ author }}</span>
+        @if (!last) { <span> | </span> }
+        }
+    </div>
+    }
+
+    <!-- Year of Publication -->
+    @if (itemTab.firstMetadataValue('dc.date.issued')) {
+    <div class="col-lg-12 mb-2 p-0">
+        <span class="text-secondary h6">{{'untypeitem.metadata.yearofpublication' | translate}}: </span>
+        <span class="text-black">{{ itemTab.firstMetadataValue('dc.date.issued') }}</span>
+    </div>
+    }
+
+    <!-- Language -->
+    @if (itemTab.firstMetadataValue('dc.language.iso')) {
+    <div class="col-lg-12 mb-2 p-0">
+        <span class="text-secondary h6">{{'untypeitem.metadata.language' | translate}}: </span>
+        @for (lang of itemTab.allMetadataValues('dc.language.iso'); track lang; let last = $last) {
+        <span class="h6"><span class="badge badge-secondary">{{ lang }}</span></span>
+        @if (!last) { <span> | </span> }
+        }
+    </div>
+    }
+
+    <!-- Keywords -->
+    @if (itemTab.firstMetadataValue('dc.subject')) {
+    <div class="col-lg-12 mb-2 p-0">
+        <span class="text-secondary h6">{{'untypeitem.metadata.keywords' | translate}}: </span>
+        @for (subject of itemTab.allMetadataValues('dc.subject'); track subject; let last = $last) {
+        <a class="h6" [routerLink]="['/search']" [queryParams]="{ 'f.subject': subject + ',equals' }">
+            <span class="badge badge-secondary">{{ subject }}</span>
+        </a>
+        @if (!last) { <span> | </span> }
+        }
+    </div>
+    }
+
+    <!-- Department -->
+    @if (itemTab.firstMetadataValue('dc.department')) {
+    <div class="col-lg-12 mb-2 p-0">
+        <span class="text-secondary h6">{{'untypeitem.metadata.department' | translate}}: </span>
+        @for (dept of itemTab.allMetadataValues('dc.department'); track dept; let last = $last) {
+        <a class="h6" [routerLink]="['/search']" [queryParams]="{ 'f.department': dept + ',equals' }">
+            <span class="badge badge-secondary">{{ dept }}</span>
+        </a>
+        @if (!last) { <span> | </span> }
+        }
+    </div>
+    }
+
+    <!-- Location -->
+    @if (itemTab.firstMetadataValue('dc.location')) {
+    <div class="col-lg-12 mb-2 p-0">
+        <span class="text-secondary h6">{{'untypeitem.metadata.location' | translate}}: </span>
+        @for (loc of itemTab.allMetadataValues('dc.location'); track loc; let last = $last) {
+        <a class="h6" [routerLink]="['/search']" [queryParams]="{ 'f.location': loc + ',equals' }">
+            <span class="badge badge-secondary">{{ loc }}</span>
+        </a>
+        @if (!last) { <span> | </span> }
+        }
+    </div>
+    }
+
+
+    <!-- Library Location -->
+    @if (itemTab.firstMetadataValue('dc.location.library')) {
+    <div class="col-lg-12 mb-2 p-0">
+        <span class="text-secondary h6">{{'untypeitem.metadata.librarylocation' | translate}}: </span>
+        @for (loc of itemTab.allMetadataValues('dc.location.library'); track loc; let last = $last) {
+        <a class="h6" [routerLink]="['/search']" [queryParams]="{ 'f.loclib': loc + ',equals' }">
+            <span class="badge badge-secondary">{{ loc }}</span>
+        </a>
+        @if (!last) { <span> | </span> }
+        }
+    </div>
+    }
+
+    <!-- Organization -->
+    @if (itemTab.firstMetadataValue('dc.organization')) {
+    <div class="col-lg-12 mb-3 p-0">
+        <span class="text-secondary h6">{{'untypeitem.metadata.organization' | translate}}: </span>
+        @for (org of itemTab.allMetadataValues('dc.organization'); track org; let last = $last) {
+        <a class="h6" [routerLink]="['/search']" [queryParams]="{ 'f.organization': org + ',equals' }">
+            <span class="badge badge-secondary">{{ org }}</span>
+        </a>
+        @if (!last) { <span> | </span> }
+        }
+    </div>
+    }
+
+    <!-- Sources -->
+    @if (itemTab.firstMetadataValue('dc.source')) {
+    <div class="col-lg-12 mb-3 p-0">
+        <span class="text-secondary h6">{{'untypeitem.metadata.sources' | translate}}: </span>
+        @for (src of itemTab.allMetadataValues('dc.source'); track src; let last = $last) {
+        <a [routerLink]="['/search']" [queryParams]="{ 'f.source': src + ',equals' }">
+            <span class="badge badge-secondary">{{ src }}</span>
+        </a>
+        @if (!last) { <span> | </span> }
+        }
+    </div>
+    }
+
+    <!-- Abstract -->
+    @if (itemTab.allMetadataValues('dc.description.abstract')) {
+    <div class="col-lg-12 mb-3 item-list-abstract">
+        @for (abstract of itemTab.allMetadataValues('dc.description.abstract'); track abstract) {
+        <span class="text-secondary h6">{{'item.page.abstract' | translate}}: </span>
+        @if (itemTab) {
+        <ds-truncatable [id]="2">
+            <ds-truncatable-part [id]="2" [minLines]="3">
+                <span class="slash text-black">{{ abstract }}</span>&nbsp;
+            </ds-truncatable-part>
+        </ds-truncatable>
+        }
+        }
+    </div>
+    }
+
+    <!-- Description -->
+    @if (itemTab.firstMetadataValue('dc.description')) {
+    <div class="col-lg-12 mb-3 item-list-abstract">
+        <span class="text-secondary h6">{{'admin.registries.bitstream-formats.edit.description.label' | translate}}: </span>
+        @if (itemTab) {
+        <ds-truncatable [id]="1">
+            <ds-truncatable-part [id]="1" [minLines]="3">
+                <span class="slash text-black">{{ itemTab.firstMetadataValue('dc.description') }}</span>
+            </ds-truncatable-part>
+        </ds-truncatable>
+        }
+    </div>
+    }
+
+
+
+
+    <!-- Conference Date -->
+    @if (itemTab.firstMetadataValue('dc.bibliographicCitation.conferencedate')) {
+    <div class="col-lg-12 mb-3 p-0 item-list-abstract">
+        <span class="text-secondary h6">Conference Date: </span>
+        @for (date of itemTab.allMetadataValues('dc.bibliographicCitation.conferencedate'); track date; let last =
+        $last) {
+        <span>{{ date }}</span>
+        @if (!last) { <span> | </span> }
+        }
+    </div>
+    }
+
+    <!-- Conference Name -->
+    @if (itemTab.firstMetadataValue('dc.bibliographicCitation.conferencename')) {
+    <div class="col-lg-12 mb-3 p-0 item-list-abstract">
+        <span class="text-secondary h6">{{'untypeitem.metadata.conferencename' | translate}}: </span>
+        @for (confName of itemTab.allMetadataValues('dc.bibliographicCitation.conferencename'); track confName; let last
+        = $last) {
+        <span>{{ confName }}</span>
+        @if (!last) { <span> | </span> }
+        }
+    </div>
+    }
+
+    <!-- Conference Location -->
+    @if (itemTab.firstMetadataValue('dc.bibliographicCitation.conferenceplace')) {
+    <div class="col-lg-12 mb-3 p-0 item-list-abstract">
+        <span class="text-secondary h6">{{'untypeitem.metadata.conferencelocation' | translate}}: </span>
+        @for (place of itemTab.allMetadataValues('dc.bibliographicCitation.conferenceplace'); track place; let last =
+        $last) {
+        <span>{{ place }}</span>
+        @if (!last) { <span> | </span> }
+        }
+    </div>
+    }
+
+    <!-- Publisher -->
+    @if (itemTab.firstMetadataValue('dc.publisher')) {
+    <div class="col-lg-12 mb-3 p-0 item-list-abstract">
+        <span class="text-secondary h6">{{'untypeitem.metadata.publisher' | translate}}: </span>
+        @for (publisher of itemTab.allMetadataValues('dc.publisher'); track publisher; let last = $last) {
+        <span>{{ publisher }}</span>
+        @if (!last) { <span> | </span> }
+        }
+    </div>
+    }
+
+    <!-- Journal Title -->
+    @if (itemTab.firstMetadataValue('dc.bibliographicCitation.title')) {
+    <div class="col-lg-12 mb-3 p-0 item-list-abstract">
+        <span class="text-secondary h6">{{'untypeitem.metadata.journaltitle' | translate}}: </span>
+        @for (title of itemTab.allMetadataValues('dc.bibliographicCitation.title'); track title; let last = $last) {
+        <span>{{ title }}</span>
+        @if (!last) { <span> | </span> }
+        }
+    </div>
+    }
+
+    <!-- Volume -->
+    @if (itemTab.firstMetadataValue('dc.bibliographicCitation.volume')) {
+    <div class="col-lg-12 mb-3 p-0 item-list-abstract">
+        <span class="text-secondary h6">{{'untypeitem.metadata.volume' | translate}}: </span>
+        @for (volume of itemTab.allMetadataValues('dc.bibliographicCitation.volume'); track volume; let last = $last) {
+        <span>{{ volume }}</span>
+        @if (!last) { <span> | </span> }
+        }
+    </div>
+    }
+
+
+
+    <!-- Issue / Article Nr -->
+    @if (itemTab.firstMetadataValue('dc.bibliographicCitation.issue')) {
+    <div class="col-lg-12 mb-3 p-0 item-list-abstract">
+        <span class="text-secondary h6">{{'untypeitem.metadata.articleno' | translate}}: </span>
+        @for (issue of itemTab.allMetadataValues('dc.bibliographicCitation.issue'); track issue; let last = $last) {
+        <span>{{ issue }}</span>
+        @if (!last) { <span> | </span> }
+        }
+    </div>
+    }
+
+    <!-- Page Range -->
+    @if (itemTab.firstMetadataValue('dc.format.pagerange')) {
+    <div class="col-lg-12 mb-3 p-0 item-list-abstract">
+        <span class="text-secondary h6">{{'untypeitem.metadata.pagerange' | translate}}: </span>
+        @for (page of itemTab.allMetadataValues('dc.format.pagerange'); track page; let last = $last) {
+        <span>{{ page }}</span>
+        @if (!last) { <span> | </span> }
+        }
+    </div>
+    }
+
+    <!-- Title of Parent Book -->
+    @if (itemTab.firstMetadataValue('dc.title.parent')) {
+    <div class="col-lg-12 mb-3 p-0 item-list-abstract">
+        <span class="text-secondary h6">{{'untypeitem.metadata.titleofparentbook' | translate}}: </span>
+        @for (parentTitle of itemTab.allMetadataValues('dc.title.parent'); track parentTitle; let last = $last) {
+        <span>{{ parentTitle }}</span>
+        @if (!last) { <span> | </span> }
+        }
+    </div>
+    }
+
+    <!-- Creative Commons -->
+    @if (itemTab.firstMetadataValue('dc.rights')) {
+    <div class="col-lg-12 mb-3 p-0 item-list-abstract">
+        <span class="text-secondary h6">{{'untypeitem.metadata.creativecommons' | translate}}: </span>
+        @for (rights of itemTab.allMetadataValues('dc.rights'); track rights; let last = $last) {
+        <span>{{ rights }}</span>
+        @if (!last) { <span> | </span> }
+        }
+    </div>
+    }
+
+    <!-- Citation -->
+    @if (itemTab.firstMetadataValue('dc.identifier.citation')) {
+    <div class="col-lg-12 mb-3 p-0 item-list-abstract">
+        <span class="text-secondary h6">{{'item.page.citation' | translate}}: </span>
+        @for (citation of itemTab.allMetadataValues('dc.identifier.citation'); track citation; let last = $last) {
+        <span>{{ citation }}</span>
+        @if (!last) { <span> | </span> }
+        }
+    </div>
+    }
+
+    <!-- Series / Report No. -->
+    @if (itemTab.firstMetadataValue('dc.relation.ispartofseries')) {
+    <div class="col-lg-12 mb-3 p-0 item-list-abstract">
+        <span class="text-secondary h6">{{'untypeitem.metadata.seriesno' | translate}}: </span>
+        @for (series of itemTab.allMetadataValues('dc.relation.ispartofseries'); track series; let last = $last) {
+        <span>{{ series }}</span>
+        @if (!last) { <span> | </span> }
+        }
+    </div>
+    }
+
+    <!-- Identifiers -->
+    @if (itemTab.firstMetadataValue('dc.identifier')) {
+    <div class="col-lg-12 mb-3 p-0 item-list-abstract">
+        <span class="text-secondary h6">{{'untypeitem.metadata.identifiers' | translate}} : </span>
+        @for (id of itemTab.allMetadataValues('dc.identifier'); track id; let last = $last) {
+        <a [href]="itemTab.firstMetadataValue('dc.identifier')">{{ id }}</a>
+        @if (!last) { <span> | </span> }
+        }
+    </div>
+    }
+
+    <!-- Date of Online Publication -->
+    @if (itemTab.firstMetadataValue('refterms.dateFirstOnline')) {
+    <div class="col-lg-12 mb-3 p-0 item-list-abstract">
+        <span class="text-secondary h6">{{'untypeitem.metadata.dateofonlinepubliction' | translate}} : </span>
+        @for (date of itemTab.allMetadataValues('refterms.dateFirstOnline'); track date; let last = $last) {
+        <span>{{ date }}</span>
+        @if (!last) { <span> | </span> }
+        }
+    </div>
+    }
+
+    <!-- License URI -->
+    @if (itemTab.firstMetadataValue('rioxxterms.licenseref.uri')) {
+    <div class="col-lg-12 mb-3 p-0 item-list-abstract">
+        <span class="text-secondary h6">{{'untypeitem.metadata.licenceuri' | translate}} : </span>
+        @for (uri of itemTab.allMetadataValues('rioxxterms.licenseref.uri'); track uri; let last = $last) {
+        <span>{{ uri }}</span>
+        @if (!last) { <span> | </span> }
+        }
+    </div>
+    }
+
+    <!-- License Start Date -->
+    @if (itemTab.firstMetadataValue('rioxxterms.licenseref.startdate')) {
+    <div class="col-lg-12 mb-3 p-0 item-list-abstract">
+        <span class="text-secondary h6">{{'untypeitem.metadata.licensestartdate' | translate}} : </span>
+        @for (startDate of itemTab.allMetadataValues('rioxxterms.licenseref.startdate'); track startDate; let last =
+        $last) {
+        <span>{{ startDate }}</span>
+        @if (!last) { <span> | </span> }
+        }
+    </div>
+    }
+
+    <!-- Date Accepted -->
+    @if (itemTab.firstMetadataValue('dcterms.dateAccepted')) {
+    <div class="col-lg-12 mb-3 p-0 item-list-abstract">
+        <span class="text-secondary h6">{{'untypeitem.metadata.dateaccepted' | translate}} : </span>
+        @for (date of itemTab.allMetadataValues('dcterms.dateAccepted'); track date; let last = $last) {
+        <span>{{ date }}</span>
+        @if (!last) { <span> | </span> }
+        }
+    </div>
+    }
+
+    <!-- Version -->
+    @if (itemTab.firstMetadataValue('rioxxterms.version')) {
+    <div class="col-lg-12 mb-3 p-0 item-list-abstract">
+        <span class="text-secondary h6">{{'untypeitem.metadata.version' | translate}} : </span>
+        @for (version of itemTab.allMetadataValues('rioxxterms.version'); track version; let last = $last) {
+        <span>{{ version }}</span>
+        @if (!last) { <span> | </span> }
+        }
+    </div>
+    }
+
+    <!-- Version of Record (DOI) -->
+    @if (itemTab.firstMetadataValue('rioxxterms.versionofrecord')) {
+    <div class="col-lg-12 mb-3 p-0 item-list-abstract">
+        <span class="text-secondary h6">{{'untypeitem.metadata.versionofrecord' | translate}} : </span>
+        @for (doi of itemTab.allMetadataValues('rioxxterms.versionofrecord'); track doi; let last = $last) {
+        <span>{{ doi }}</span>
+        @if (!last) { <span> | </span> }
+        }
+    </div>
+    }
+
+    <!-- REF Panel -->
+    @if (itemTab.firstMetadataValue('refterms.panel')) {
+    <div class="col-lg-12 mb-3 p-0 item-list-abstract">
+        <span class="text-secondary h6">{{'untypeitem.metadata.refpanel' | translate}} : </span>
+        @for (panel of itemTab.allMetadataValues('refterms.panel'); track panel; let last = $last) {
+        <span>{{ panel }}</span>
+        @if (!last) { <span> | </span> }
+        }
+    </div>
+    }
+
+    <!-- Projects or Funders -->
+    @if (itemTab.firstMetadataValue('dc.description.sponsorship')) {
+    <div class="col-lg-12 mb-3 p-0 item-list-abstract">
+        <span class="text-secondary h6">{{'untypeitem.metadata.projectsfounders' | translate}} : </span>
+        @for (sponsor of itemTab.allMetadataValues('dc.description.sponsorship'); track sponsor; let last = $last) {
+        <span>{{ sponsor }}</span>
+        @if (!last) { <span> | </span> }
+        }
+    </div>
+    }
+
+    <!-- Embedded YouTube Video -->
+    @if (itemTab.firstMetadataValue('dc.relation.youtube')) {
+    <div class="col-lg-12 mb-3 p-0 item-list-abstract">
+        <span class="text-secondary h6">{{'untypeitem.metadata.youtube' | translate}} : </span>
+        @for (yt of itemTab.allMetadataValues('dc.relation.youtube'); track yt; let last = $last) {
+        <a [href]="itemTab.firstMetadataValue('dc.relation.youtube')">{{ yt }}</a>
+        @if (!last) { <span> | </span> }
+        }
+    </div>
+    }
+
+    <!-- Embedded Vimeo Video -->
+    @if (itemTab.firstMetadataValue('dc.relation.vimeo')) {
+    <div class="col-lg-12 mb-3 p-0 item-list-abstract">
+        <span class="text-secondary h6">{{'untypeitem.metadata.vimeo' | translate}} : </span>
+        @for (vimeo of itemTab.allMetadataValues('dc.relation.vimeo'); track vimeo; let last = $last) {
+        <a [href]="itemTab.firstMetadataValue('dc.relation.vimeo')">{{ vimeo }}</a>
+        @if (!last) { <span> | </span> }
+        }
+    </div>
+    }
+
+    <!-- Embedded Video -->
+    @if (itemTab.firstMetadataValue('dc.relation.embedded')) {
+    <div class="col-lg-12 mb-3 p-0 item-list-abstract">
+        <span class="text-secondary h6">{{'untypeitem.metadata.embedded' | translate}} : </span>
+        @for (embed of itemTab.allMetadataValues('dc.relation.embedded'); track embed; let last = $last) {
+        <a [href]="itemTab.firstMetadataValue('dc.relation.embedded')">{{ embed }}</a>
+        @if (!last) { <span> | </span> }
+        }
+    </div>
+    }
+
+    <!-- DOI -->
+    @if (itemTab.firstMetadataValue('dc.identifier.doi')) {
+    <div class="col-lg-12 mb-3 p-0 item-list-abstract">
+        <span class="text-secondary h6">{{'untypeitem.metadata.doi' | translate}} : </span>
+        @for (doi of itemTab.allMetadataValues('dc.identifier.doi'); track doi; let last = $last) {
+        <span>{{ doi }}</span>
+        @if (!last) { <span> | </span> }
+        }
+    </div>
+    }
+
+    <!-- ISBN -->
+    @if (itemTab.firstMetadataValue('dc.identifier.isbn')) {
+    <div class="col-lg-12 mb-3 p-0 item-list-abstract">
+        <span class="text-secondary h6">{{'untypeitem.metadata.isbn' | translate}} : </span>
+        @for (isbn of itemTab.allMetadataValues('dc.identifier.isbn'); track isbn; let last = $last) {
+        <span>{{ isbn }}</span>
+        @if (!last) { <span> | </span> }
+        }
+    </div>
+    }
+
+    <!-- ISSN -->
+    @if (itemTab.firstMetadataValue('dc.identifier.issn')) {
+    <div class="col-lg-12 mb-3 p-0 item-list-abstract">
+        <span class="text-secondary h6">{{'untypeitem.metadata.issn' | translate}} : </span>
+        @for (issn of itemTab.allMetadataValues('dc.identifier.issn'); track issn; let last = $last) {
+        <span>{{ issn }}</span>
+        @if (!last) { <span> | </span> }
+        }
+    </div>
+    }
+
+    <!-- Other Identifiers -->
+    @if (itemTab.firstMetadataValue('dc.identifier.other')) {
+    <div class="col-lg-12 mb-3 p-0 item-list-abstract">
+        <span class="text-secondary h6">{{'untypeitem.metadata.other' | translate}} : </span>
+        @for (other of itemTab.allMetadataValues('dc.identifier.other'); track other; let last = $last) {
+        <span>{{ other }}</span>
+        @if (!last) { <span> | </span> }
+        }
+    </div>
+    }
+
+    <!-- Resource / Dataset Location -->
+    @if (itemTab.firstMetadataValue('dc.relation.uri')) {
+    <div class="col-lg-12 mb-3 p-0 item-list-abstract">
+        <span class="text-secondary h6">{{'untypeitem.metadata.resource' | translate}} : </span>
+        @for (uri of itemTab.allMetadataValues('dc.relation.uri'); track uri; let last = $last) {
+        <a [href]="itemTab.firstMetadataValue('dc.relation.uri')" target="_blank">{{ uri }}</a>
+        @if (!last) { <span> | </span> }
+        }
+    </div>
+    }
+
+    <!-- URI -->
+    @if (itemTab.firstMetadataValue('dc.identifier.uri')) {
+    <div class="col-lg-12 mb-3 p-0 item-list-abstract">
+        <span class="text-secondary h6">{{ 'untypeitem.metadata.uri' | translate }} : </span>
+        @for (uri of itemTab.allMetadataValues('dc.identifier.uri'); track uri; let last = $last) {
+        <a [href]="itemTab.firstMetadataValue('dc.identifier.uri')" target="_blank">{{ uri }}</a>
+        @if (!last) { <span> | </span> }
+        }
+    </div>
+    }
+
+    <!-- Place of Publication -->
+    @if (itemTab.firstMetadataValue('dc.publisher.place')) {
+    <div class="col-lg-12 mb-3 p-0 item-list-abstract">
+        <span class="text-secondary h6">{{'untypeitem.metadata.place' | translate}} : </span>
+        @for (place of itemTab.allMetadataValues('dc.publisher.place'); track place; let last = $last) {
+        <span>{{ place }}</span>
+        @if (!last) { <span> | </span> }
+        }
+    </div>
+    }
+
+    <!-- Thesis Type -->
+    @if (itemTab.firstMetadataValue('dc.description.degree')) {
+    <div class="col-lg-12 mb-3 p-0 item-list-abstract">
+        <span class="text-secondary h6">{{'untypeitem.metadata.thesis' | translate}} : </span>
+        @for (degree of itemTab.allMetadataValues('dc.description.degree'); track degree; let last = $last) {
+        <span>{{ degree }}</span>
+        @if (!last) { <span> | </span> }
+        }
+    </div>
+    }
+
+    <!-- Pages -->
+    @if (itemTab.firstMetadataValue('dc.format.pages')) {
+    <div class="col-lg-12 mb-3 p-0 item-list-abstract">
+        <span class="text-secondary h6">{{'untypeitem.metadata.pages' | translate}} : </span>
+        @for (pages of itemTab.allMetadataValues('dc.format.pages'); track pages; let last = $last) {
+        <span>{{ pages }}</span>
+        @if (!last) { <span> | </span> }
+        }
+    </div>
+    }
+
+    <!-- Refereed -->
+    @if (itemTab.firstMetadataValue('dc.description.refereed')) {
+    <div class="col-lg-12 mb-3 p-0 item-list-abstract">
+        <span class="text-secondary h6">{{'untypeitem.metadata.refereed' | translate}} : </span>
+        @for (refereed of itemTab.allMetadataValues('dc.description.refereed'); track refereed; let last = $last) {
+        <span>{{ refereed }}</span>
+        @if (!last) { <span> | </span> }
+        }
+    </div>
+    }
+
+    <!-- Subject: Uncontrolled keywords -->
+    @if (itemTab.firstMetadataValue('dc.subject.other')) {
+    <div class="col-lg-12 mb-3 p-0 item-list-abstract">
+        <span class="text-secondary h6">{{'untypeitem.metadata.subject' | translate}} : </span>
+        @for (keyword of itemTab.allMetadataValues('dc.subject.other'); track keyword; let last = $last) {
+        <span>{{ keyword }}</span>
+        @if (!last) { <span> | </span> }
+        }
+    </div>
+    }
+
+    <!-- Geographical Terms -->
+    @if (itemTab.firstMetadataValue('dc.coverage.spatial')) {
+    <div class="col-lg-12 mb-3 p-0 item-list-abstract">
+        <span class="text-secondary h6">{{'untypeitem.metadata.geographical' | translate}} : </span>
+        @for (geo of itemTab.allMetadataValues('dc.coverage.spatial'); track geo; let last = $last) {
+        <span>{{ geo }}</span>
+        @if (!last) { <span> | </span> }
+        }
+    </div>
+    }
+
+    <!-- Notes -->
+    @if (itemTab.firstMetadataValue('dc.description.notes')) {
+    <div class="col-lg-12 mb-3 p-0 item-list-abstract">
+        <span class="text-secondary h6">{{'untypeitem.metadata.notes' | translate}} : </span>
+        @for (note of itemTab.allMetadataValues('dc.description.notes'); track note; let last = $last) {
+        <span>{{ note }}</span>
+        @if (!last) { <span> | </span> }
+        }
+    </div>
+    }
+
+    <!-- Subject: AGROVOC -->
+    @if (itemTab.firstMetadataValue('dc.subject.asfa')) {
+    <div class="col-lg-12 mb-3 p-0 item-list-abstract">
+        <span class="text-secondary h6">{{'untypeitem.metadata.asfa' | translate}} : </span>
+        @for (agrovoc of itemTab.allMetadataValues('dc.subject.asfa'); track agrovoc; let last = $last) {
+        <span>{{ agrovoc }}</span>
+        @if (!last) { <span> | </span> }
+        }
+    </div>
+    }
+
+    <!-- Publication Status -->
+    @if (itemTab.firstMetadataValue('dc.description.status')) {
+    <div class="col-lg-12 mb-3 p-0 item-list-abstract">
+        <span class="text-secondary h6">{{'untypeitem.metadata.status'}} : </span>
+        @for (status of itemTab.allMetadataValues('dc.description.status'); track status; let last = $last) {
+        <span>{{ status }}</span>
+        @if (!last) { <span> | </span> }
+        }
+    </div>
+    }
+
+</div>
+}

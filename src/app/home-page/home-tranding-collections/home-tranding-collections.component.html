@@ -1,0 +1,104 @@
+<div class="row align-items-center" style="margin-left: 0px!important;margin-right: 0px!important;">
+  <div class="col-md-6 col-sm-12">
+    <div class="chart-heading">
+      <p class="title">{{'home.label.trendingcollection' | translate}}</p>
+      <p class="description">{{'home.label.trendingclick instruction' | translate}}</p>
+    </div>
+  </div>
+  <div class="col-md-6 col-sm-12 text-md-end">
+    <div class="d-flex align-items-center justify-content-md-end">
+      @if (isAdmin$ | async) {
+      <i class="fa fa-download me-2" style="cursor: pointer;" title="Download Excel" (click)="downloadExcel()"
+        aria-hidden="true">
+      </i>
+      }
+       <div class="btn-fliter">
+        <button [class]="i === 0 ? 'enabledbutton':''" (click)="buttonClick(0)">{{'home.label.week' |
+          translate}}</button>
+        <span class="line"></span>
+        <button [class]="i === 1 ? 'enabledbutton':''" (click)="buttonClick(1)">{{'home.label.month' |
+          translate}}</button>
+        <span class="line"></span>
+        <button [class]="i === 2 ? 'enabledbutton':''" (click)="buttonClick(2)">{{'home.label.year' |
+          translate}}</button>
+        <span class="line"></span>
+        <button [class]="i === 3 ? 'enabledbutton':''" (click)="buttonClick(3)">{{'home.label.alltime' |
+          translate}}</button>
+      </div>
+      <div>
+        <ng-template #htmlContent>
+          <div>
+            <p>{{'home.label.weekinfo' | translate}}</p>
+            <p>{{'home.label.monthinfo' | translate}}</p>
+            <p>{{'home.label.yearinfo' | translate}}</p>
+            <p>{{'home.label.alltimeinfo' | translate}}</p>
+          </div>
+        </ng-template>
+        <span [ngbTooltip]="htmlContent" class="ms-2"><i class="fas fa-info-circle"></i></span>
+      </div>
+    </div>
+    <div class="chart-heading mt-2">
+      <p class="description">{{'home.label.desireperiod' | translate}}</p>
+    </div>
+  </div>
+</div>
+
+<div class="row" style="margin-left: 0px!important;margin-right: 0px!important;">
+  <div class="col-md-7 col-sm-12 align-items-center">
+    <div id="trendingcommunities">
+      @if (!!isLoading) {
+      <div class="d-flex justify-content-center align-items-center" style="min-height: 450px;">
+        <div class="spinner-border" role="status">
+          <span class="sr-only">{{'home.label.loading' | translate}}</span>
+        </div>
+      </div>
+      }
+      @if (!isLoading) {
+      <ngx-charts-pie-chart [scheme]="colorScheme" [results]="barChart" [gradient]="false" [legend]="false"
+        [labels]="true" [doughnut]="true" (select)="onDataPointHover($event)">
+      </ngx-charts-pie-chart>
+      }
+    </div>
+  </div>
+  <div class="col-md-5 col-sm-12">
+    <div class="geo-table m-2 p-2">
+      <div class="col-12">
+        <div class="d-flex align-items-center justify-content-between title-fliter mt-2">
+          <div class="title h6">{{communityType}}<small class="ml-2">({{totalHits}} {{'home.label.hits' |
+              translate}})</small></div>
+        </div>
+
+        <div id="allcommunities" style="max-height: 150px;" [ngClass]="{'for-one':chartOptions.length === 1,'for-two':chartOptions.length === 2,
+      'for-three':chartOptions.length === 3, 'for-four':chartOptions.length === 4}">
+          @if (!!isLoading1) {
+          <div class="d-flex justify-content-center align-items-center" style="min-height: 100px;">
+            <div class="spinner-border" role="status">
+              <span class="sr-only">{{'home.label.loading' | translate}}</span>
+            </div>
+          </div>
+          }
+          @if (!isLoading1) {
+          <ngx-charts-bar-vertical [scheme]="colorScheme1" [legend]="false" [showXAxisLabel]="false"
+            [showYAxisLabel]="false" [xAxis]="false" [yAxis]="false" [xAxisLabel]="false" [yAxisLabel]="false"
+            [results]="chartOptions" [legendPosition]="'below'">
+          </ngx-charts-bar-vertical>
+          }
+        </div>
+        <small>{{'home.label.trendinfo' | translate}}</small>
+        <hr>
+        <div class="col-md-12 mapael">
+          @if(!!isLoading2) {
+          <div class="d-flex justify-content-center align-items-center" style="min-height: 450px;">
+            <div class="spinner-border" role="status">
+              <span class="sr-only">{{'home.label.loading' | translate}}</span>
+            </div>
+          </div>
+          }
+          <div id="TrendingCommunitiesChartcartMap" class="map-container">
+            <div class="map"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

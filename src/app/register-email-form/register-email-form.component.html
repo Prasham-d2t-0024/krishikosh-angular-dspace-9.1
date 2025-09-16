@@ -1,0 +1,80 @@
+<div class="container register-container user-manage-container mt-4">
+  <div class="row align-items-center justify-content-center">
+    <div class="col-12 col-sm-8 col-md-6 col-lg-4 mx-auto">
+      <div class="usermange-card">
+        <div class="p-4 mx-auto">
+          <h4 class="text-center">{{MESSAGE_PREFIX + '.header'|translate}}</h4>
+          <small class="d-block mb-3">{{MESSAGE_PREFIX + '.info' | translate}}</small>
+          @if (validMailDomains.length != 0 && typeRequest === TYPE_REQUEST_REGISTER) {
+          <p>
+            {{ MESSAGE_PREFIX + '.info.maildomain' | translate}} {{ validMailDomains.join(', ')}}
+          </p>
+          }
+          <form [class]="'ng-invalid'" [formGroup]="form">
+            <div class="form-group">
+              <div class="row">
+                <div class="col-12">
+                  <label class="font-weight-bold" for="email">{{MESSAGE_PREFIX + '.email' | translate}}</label>
+                  <input
+                    [className]="(email.invalid) && (email.dirty || email.touched) ? 'form-control is-invalid' :'form-control'"
+                    type="text" id="email" formControlName="email" />
+                  @if(email.invalid && (email.dirty || email.touched)) {
+                  <div class="invalid-feedback mb-1 show-feedback">
+                    @if(email.errors && email.errors.required) {
+                    <span>
+                      {{ MESSAGE_PREFIX + '.email.error.required' | translate }}
+                    </span>
+                    }
+                    @if(email.errors && ((email.errors.pattern && this.typeRequest === TYPE_REQUEST_REGISTER) ||
+                    email.errors.email)) {
+                    <span>
+                      {{ MESSAGE_PREFIX + '.email.error.not-email-form' | translate }}
+                      @if(validMailDomains.length > 0) {
+                      <ng-container>
+                        {{ MESSAGE_PREFIX + '.email.error.not-valid-domain' | translate: { domains:
+                        validMailDomains.join(', ') } }}
+                      </ng-container>
+                      }
+                    </span>
+                    }
+                  </div>
+                  }
+                  <small class="email-info-text">
+                    {{MESSAGE_PREFIX + '.email.hint' |translate}}
+                  </small>
+                </div>
+              </div>
+            </div>
+            @if(registrationVerification && !isRecaptchaCookieAccepted()) {
+            <ds-alert [type]="AlertTypeEnum.Warning">
+              <p class="m-0" [innerHTML]="MESSAGE_PREFIX + '.google-recaptcha.must-accept-cookies' | translate"></p>
+              <p class="m-0"><a href="javascript:void(0);" (click)="this.orejimeService.showSettings()">{{
+                  MESSAGE_PREFIX + '.google-recaptcha.open-cookie-settings' | translate }}</a></p>
+            </ds-alert>
+            }
+            @if(isRecaptchaCookieAccepted() && (googleRecaptchaService.captchaVersion() | async) === 'v2') {
+            <div class="my-3">
+              <ds-google-recaptcha [captchaMode]="(googleRecaptchaService.captchaMode() | async)"
+                (executeRecaptcha)="register($event)" (checkboxChecked)="onCheckboxChecked($event)"
+                (showNotification)="showNotification($event)"></ds-google-recaptcha>
+            </div>
+            }
+            @if (!((googleRecaptchaService.captchaVersion() | async) === 'v2' && (googleRecaptchaService.captchaMode() |
+            async) ===
+            'invisible')) {
+            <button class="btn btn-primary w-100"
+              [disabled]="form.invalid || registrationVerification && !isRecaptchaCookieAccepted() || disableUntilChecked"
+              (click)="register()">
+              {{ MESSAGE_PREFIX + '.submit' | translate }}
+            </button>
+            } @else {
+            <button class="btn btn-primary w-100" [disabled]="form.invalid" (click)="executeRecaptcha()">
+              {{ MESSAGE_PREFIX + '.submit' | translate }}
+            </button>
+            }
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

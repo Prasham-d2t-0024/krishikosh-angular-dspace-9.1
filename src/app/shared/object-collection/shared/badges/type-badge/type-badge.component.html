@@ -1,0 +1,13 @@
+@if(typeMessage && isItemBadge(typeMessage)) {
+  <span>
+    <span class="badge badge-secondary" style="display: inline!important;white-space:normal!important;">{{ typeMessage | translate }}</span>
+  </span>
+}
+
+@if(dctype.length){
+  @for (type of dctype; track type; let first = $first) {
+    <span [style.margin-left.px]="first ? 0 : 4">
+      <span class="badge badge-secondary">{{ type | translate }}</span>
+    </span>
+  }
+} 

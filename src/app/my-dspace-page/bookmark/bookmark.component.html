@@ -1,0 +1,21 @@
+@if(totalBookmarks > 0) {
+<div>
+    <ds-pagination [paginationOptions]="config"
+        [collectionSize]="totalBookmarks" [hideGear]="true" [hidePagerWhenSinglePage]="true"
+        (paginationChange)="onPaginationChange($event)" (pageChange)="onPageChange($event)" (pageSizeChange)="onPageSizeChange($event)" [hidePaginationDetail]="false">
+        @for (item of (bookMarks | async)?.page; track $index) {
+        <div class="recent-item-list mb-4">
+            <ds-listable-object-component-loader [object]="item" [viewMode]="viewMode" class="pb-4">
+            </ds-listable-object-component-loader>
+        </div>
+    }
+    </ds-pagination>
+</div>
+}
+@if(totalBookmarks == 0) {
+<div>
+    <p class="text-center mb-0">
+        {{'mydspace.bookmarks.no_bookmarks' | translate}}
+    </p>
+</div>
+}

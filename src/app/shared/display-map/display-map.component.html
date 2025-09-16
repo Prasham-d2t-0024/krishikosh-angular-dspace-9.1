@@ -1,0 +1,16 @@
+<div>
+    <div [id]="id" [ngStyle]="{'height': height}" style="width: 100%;max-height: 500px;" class="map-container">
+    </div>
+    @if(showLegends) {
+    <div class="custom-legend-container">
+        <div class="custom-legend">
+            @for (item of customLegendItems; track $index) {
+            <div class="custom-legend-item" [class.selected]="item.selected" (click)="onCustomLegendClick(item)">
+                <div class="legend-color-box" [style.background-color]="item.color"></div>
+                <span class="legend-label">{{ item.label }}</span>
+            </div>
+            }
+        </div>
+    </div>
+    }
+</div>

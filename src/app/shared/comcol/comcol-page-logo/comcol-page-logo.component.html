@@ -1,0 +1,9 @@
+@if (logo) {
+  <div class="d-flex mb-2 justify-content-center justify-content-md-start dso-logo">
+    <img [src]="logo._links.content.href" class="w-100 img-fluid" [attr.alt]="alternateText ? alternateText : null" (error)="errorHandler($event)"/>
+  </div>
+} @else {
+  <div class="d-flex mb-2 justify-content-center justify-content-md-start dso-logo">
+    <img [src]="holderSource" class="w-100 img-fluid" [attr.alt]="alternateText ? alternateText : null"/>
+  </div>
+}

@@ -1,0 +1,44 @@
+<div class="thumbnail" [class.limit-width]="limitWidth">
+  @if (isLoading()) {
+    <div class="thumbnail-content outer">
+      <div class="inner">
+        <div class="centered">
+          <ds-loading [spinner]="true"></ds-loading>
+        </div>
+      </div>
+    </div>
+  }
+  <!-- don't use *ngIf="!isLoading" so the thumbnail can load in while the animation is playing -->
+  @if (src() !== null) {
+    <img class="thumbnail-content img-fluid p-1"
+         [class.d-none]="isLoading()"
+         [src]="src() | dsSafeUrl"
+         [alt]="alt | translate"
+         (error)="errorHandler()"
+         (load)="successHandler()"/>
+  }
+  @if (src() === null && isLoading() === false) {
+    <!-- <div class="thumbnail-content outer">
+      <div class="inner">
+        <div class="thumbnail-placeholder centered">
+          {{ placeholder | translate }}
+        </div>
+      </div>
+    </div> -->
+    @if(fromCommunity) {
+    <img class="thumbnail-content img-fluid p-1"
+         [class.d-none]="isLoading()"
+         [src]="image2"
+         [alt]="alt | translate"
+         (error)="errorHandler()"
+         (load)="successHandler()"/>
+    } @else {
+    <img class="thumbnail-content img-fluid p-1"
+         [class.d-none]="isLoading()"
+         [src]="image1"
+         [alt]="alt | translate"
+         (error)="errorHandler()"
+         (load)="successHandler()"/>
+  }
+}
+</div>

@@ -1,0 +1,34 @@
+<ds-pagination [paginationOptions]="config" [collectionSize]="objects?.payload?.totalElements"
+  [sortOptions]="sortConfig" [hideGear]="hideGear" [objects]="objects"
+  [hidePagerWhenSinglePage]="hidePagerWhenSinglePage" [hidePaginationDetail]="hidePaginationDetail"
+  [showPaginator]="showPaginator" (pageChange)="onPageChange($event)" (pageSizeChange)="onPageSizeChange($event)"
+  (sortDirectionChange)="onSortDirectionChange($event)" (sortFieldChange)="onSortFieldChange($event)"
+  (paginationChange)="onPaginationChange($event)" (prev)="goPrev()" (next)="goNext()">
+  @if (objects?.hasSucceeded) {
+  <div class="card-columns px-1 row">
+    @for (column of (columns$ | async); track column) {
+    <div class="card-column col col-sm-6 col-lg-4 ps-1 pe-1" @fadeIn>
+      @for (object of column; track object) {
+      <div class="card-element" [attr.data-test]="'grid-object' | dsBrowserOnly">
+        <ds-listable-object-component-loader [object]="object" [viewMode]="viewMode" [context]="context"
+          [showThumbnails]="showThumbnails" [linkType]="linkType"></ds-listable-object-component-loader>
+      </div>
+      }
+    </div>
+    }
+  </div>
+  }
+  @if (objects.hasFailed) {
+  <ds-error message="{{'error.objects' | translate}}"></ds-error>
+  }
+  @if (objects.isLoading) {
+  <ds-loading message="{{'loading.objects' | translate}}"></ds-loading>
+  }
+</ds-pagination>
+
+<!-- <div class="text-center btn-height ng-star-inserted">
+  <a class="lead btn btn-primary view-button" [routerLink]="['/community-list']">
+    <span>Explore all communities</span>
+    <i class="fa ml-1 fa-share iconview"></i>
+  </a>
+</div> -->

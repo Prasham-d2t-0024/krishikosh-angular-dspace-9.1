@@ -1,0 +1,330 @@
+@import '../../../../../styles/variables.scss';
+
+.top-header-card {
+    background-color: white;
+    border-radius: 0px;
+}
+.footeractions-right .action-icons > div {
+  min-width: 36px;
+}
+@media (max-width: 767.98px) {
+  .footeractions-right .d-flex {
+    // flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 6px;
+  }
+  .footeractions-right .action-icons {
+    justify-content: flex-start !important;
+    padding-left: 0 !important;
+  }
+}
+
+
+.bottem-count-text ul {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 0;
+    margin: 0;
+}
+.element {
+    cursor: pointer;
+    color: var(--ds-secondary-color);
+    /* Default color */
+    transition: color 0.3s;
+    /* Add a smooth transition effect */
+}
+
+.element:hover {
+    color: #9dc423;
+    /* New color on hover (red in this example) */
+}
+.bottem-count-text {
+    ul {
+        li {
+            text-decoration: none;
+            list-style: none;
+            display: flex;
+            align-items: center;
+            width: 100%;
+            justify-content: center;
+            padding: 10px;
+
+            img {
+                width: 28px !important;
+                margin-right: 4px;
+            }
+
+            span {
+                font-size: 14px;
+                font-weight: 600;
+                color: #978f8f;
+                margin-left: 5%;
+            }
+        }
+    }
+}
+
+.font-wight-info {
+    font-weight: 600;
+}
+.subBtn {
+    border-radius: 20px;
+    position: relative;
+    text-align: left;
+    .ellipsify {
+        max-width: calc(100% - 35px);
+    }
+    i {
+        font-size: 36px;
+        position: absolute;
+        right: 0px;
+        top: 0px;
+    }
+}
+/* Works on Firefox */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: #27aae1;
+}
+
+/* Works on Chrome, Edge, and Safari */
+*::-webkit-scrollbar {
+    width: 10px;
+}
+
+*::-webkit-scrollbar-track {
+    background: white;
+}
+
+*::-webkit-scrollbar-thumb {
+    background-color: #29a8e0;
+    border-radius: 20px;
+    border: 2px solid white;
+}
+.slash:after {
+    content: "\000A";
+    white-space: pre;
+}
+.arrowhide::after {
+    display: none;
+}
+.sharbutton{
+    color: #fff;
+        font-size: 14px !important;
+        height: 22px;
+        width: 22px;
+        border-radius: 50%;
+        padding-top: 4px;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+}
+.facebookshare {
+    background-color: #3b5998;
+}
+
+.twittershare {
+    background-color: #55acee;
+}
+
+.wahtsupshare {
+    background-color: #25D366;
+}
+
+.linkshare {
+    background-color: #0077b5;
+}
+.bar-container {
+   
+    background-color: #f1f1f1;
+    text-align: center;
+    color: white;
+}
+
+.viwerBreakupRow {
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+}
+.middle{
+    background-color: #f1f1f1;
+}
+// .info-block {
+//     .attachments, .moredetails {
+//         height: 400px;
+        
+//        ::ng-deep .theme-scrollBar {
+//             height: calc(400px - 70px);
+//             overflow-y: auto;
+//         }
+//     }
+//     .moredetails {
+//         ::ng-deep .viewmore-btn {display: none !important;}
+//     }
+// }
+.boxshadow {
+    box-shadow: 0 2px 5px #bbb;
+}
+::ng-deep {
+    .card-grid-row {
+        .pagination-masked {
+            padding: 10px 20px;
+        }
+        .pagination {margin: 0;}
+    }
+    
+    .item-detail-page {
+        .scroll-container {
+            height: auto !important;
+        }
+    }
+    .itemdetail-footer-actions {       
+        @media (max-width: 768px) {            
+            .footeractions-left {
+                .border-right {
+                    border-width: 0 !important;
+                }
+            }
+        }
+        @media (min-width: 768px) and (max-width: 1024px) and (orientation: landscape) {
+        .action-row {
+                flex-flow: column;
+        
+                .footeractions-left,
+                .footeractions-right {
+                    display: flex;
+                    max-width: 100%;
+        
+                    .flex-action {
+                        justify-content: center;
+                        width: 100%;
+                    }
+                }
+                .footeractions-right {        
+                    .flex-action {
+                        margin-bottom: 15px !important;
+                    }
+                }
+            }
+        }
+    }
+    .viewbtn-group {
+        .btn {
+          border: 1px solid black;
+          background-color: #dedede;
+          color: #000;
+          transition: all .5s;
+          &.active {
+            background-color: var(--ds-primary-color) !important;
+            border-color: var(--ds-primary-color) !important;
+            color: white;
+          }
+          &:not(.disabled):focus,
+          &:focus {
+            box-shadow: none;
+          }
+          &:not(.active){
+            &:hover {
+              background-color: #1a697a;
+              color: white;
+            }
+          }
+        }
+    }
+}
+
+.main-div {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+
+.key {
+    font-weight: bold;
+}
+
+.value {
+    flex-grow: 1;
+    margin-left: 10px;
+}
+
+  .value div,
+    .value i {
+      display: inline;
+    }
+
+
+.citation-label {
+    display: inline-block;
+    vertical-align: top; /* Keeps the label at the top */
+    margin-right: 5px; /* Adds some space between 'Citation :' and the title */
+  }
+  
+  .dso-title {
+    display: inline-block;
+    max-width: 90%; /* Adjust as needed to control wrapping */
+    vertical-align: top;
+    word-wrap: break-word; /* Ensures proper line breaks */
+  }
+
+  .chart-heading {
+    .title {
+        font-size: 1.3em;
+        color: #636365;
+        font-weight: 400;
+        margin-top: 20px;
+        margin-bottom: 10px;
+    }
+
+    .description {
+        font-size: 0.7em;
+        color: #565656;
+        line-height: 1.2em;
+    }
+}
+
+.btn-fliter {
+    border: 1px solid #ccc;
+    width: max-content;
+    padding: 5px 0px;
+    border-radius: 7px;
+
+    button {
+        all: unset;
+        cursor: pointer;
+        font-size: 13px;
+        text-transform: capitalize;
+        border: 0px;
+        border-radius: 3px;
+        padding: 2px 5px;
+        margin: 0px 5px;
+        transition: 0.3s ease-in-out all;
+
+        &:hover {
+            background-color: #f0f0f0;
+        }
+    }
+
+    .line {
+        background-color: #ccc;
+        height: 100%;
+        padding: 0px 1px;
+    }
+}
+
+.areaLegend {
+    margin-top: 50px;
+    width: 100%;
+}
+
+@media only screen and (max-width: 768px) {
+    .areaLegend {
+        display: none;
+    }
+}
+
+.enabledbutton {
+    font-weight: 700!important;
+}
+
