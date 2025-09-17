@@ -14,33 +14,33 @@ function updateScssVariables(outputPath, generatedVariables) {
 
     if (!existingContent.trim()) {
         // File doesn't exist or is empty - create new file with generated content
-    const newContent = `// Auto-generated theme variables from theme-config.json
-    // Last updated: ${new Date().toISOString()}
+        const newContent = `// Auto-generated theme variables from theme-config.json
+        // Last updated: ${new Date().toISOString()}
 
-    /*** BOOTSTRAP THEME COLORS ***/
-    ${Object.entries(generatedVariables.bootstrap_colors).map(([key, value]) =>
-            `$${key.replace(/_/g, '-')}: ${value};`
-        ).join('\n')}
+        /*** BOOTSTRAP THEME COLORS ***/
+        ${Object.entries(generatedVariables.bootstrap_colors).map(([key, value]) =>
+                `$${key.replace(/_/g, '-')}: ${value};`
+            ).join('\n')}
 
-    // Add new semantic colors here (you don't need to add existing semantic colors)
-    $theme-custom-semantic-colors: (
-    );
+        // Add new semantic colors here (you don't need to add existing semantic colors)
+        $theme-custom-semantic-colors: (
+        );
 
-    /*** OTHER BOOTSTRAP VARIABLES ***/
+        /*** OTHER BOOTSTRAP VARIABLES ***/
 
-    ${Object.entries(generatedVariables.other_bootstrap).map(([key, value]) => {
-            const varName = key.replace(/_/g, '-');
-            if (key === 'min_contrast_ratio') {
-                return `$${varName}: ${value} !default;`;
-            } else {
-                return `$${varName}: ${value};`;
-            }
-        }).join('\n')}
-    $link-hover-decoration: underline;
+        ${Object.entries(generatedVariables.other_bootstrap).map(([key, value]) => {
+                const varName = key.replace(/_/g, '-');
+                if (key === 'min_contrast_ratio') {
+                    return `$${varName}: ${value} !default;`;
+                } else {
+                    return `$${varName}: ${value};`;
+                }
+            }).join('\n')}
+        $link-hover-decoration: underline;
 
-    /*** CUSTOM DSPACE VARIABLES ***/
+        /*** CUSTOM DSPACE VARIABLES ***/
 
-    ${Object.entries(generatedVariables.dspace_custom).map(([key, value]) => {
+        ${Object.entries(generatedVariables.dspace_custom).map(([key, value]) => {
             const varName = key.replace(/_/g, '-');
             if (key === 'ds_breadcrumb_link_active_color') {
                 return `$${varName}: darken($light, 26.93%) !default;`;

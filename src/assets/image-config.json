@@ -4,20 +4,24 @@
         "showCarousel": true
     },
     "images": {
-        "logo": "assets/images/UPSC_logo.png",
+        "logo": "assets/images/krishikosh-logo.png",
         "favicon": "assets/dspace/images/favicons/favicon.ico",
-        "homepage": "assets/images/UPSC_home_page.jpg",
-        "login": "assets/images/UPSC_logo.png"
+        "homepage": "assets/images/krishikosh-home-page.jpg",
+        "login": "assets/images/krishikosh-logo-transparant.gif"
     },
     "imageSizes": {
         "logo": {
-            "width": "142px",
-            "height": "95px"
+            "width": "435px",
+            "height": "55px"
         },
         "homepage": {
             "width": "100vw",
             "height": "60vh",
-            "searchBarDistanceFromTop": "8vh"
+            "searchBarDistanceFromTop": "27vh"
+        },
+        "login":{
+            "width":"390px",
+            "height":"60px"
         }
     }
 }

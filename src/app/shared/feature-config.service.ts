@@ -3,7 +3,8 @@ import { HttpClient } from '@angular/common/http';
 
 export type featureConfigModel = {
   allowCommenting:boolean,
-  allowRating:boolean
+  allowRating:boolean,
+  showRepositoryLogo:boolean,
 }
 @Injectable({ providedIn: 'root' })
 
@@ -25,5 +26,8 @@ export class FeatureConfigService {
   }
   get allowCommenting(): boolean {
     return this.featureConfig.allowCommenting;
+  }
+  get showRepositoryLogo(): boolean {
+    return this.featureConfig.showRepositoryLogo;
   }
 } 

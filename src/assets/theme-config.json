@@ -1,7 +1,7 @@
 {
   "bootstrap_colors": {
-    "primary": "#06296f", 
-    "secondary": "#a7936c",
+    "primary": "#1f3f5e", 
+    "secondary": "#207698",
     "success": "#92c642",
     "info": "#8e1838",
     "warning": "#ec9433",
@@ -11,13 +11,12 @@
   },
   "other_bootstrap": {
     "link_decoration": "none"
+  }, 
+   "dspace_custom": {
+    "ds_breadcrumb_link_color": "#fff",
+    "ds_breadcrumb_link_active_color": "#1f3f5e"
   },
-  "dspace_custom": {
-    "ds_home_news_link_color": "#D2FC93",
-    "ds_header_navbar_border_bottom_color": "#92c642",
-    "ds_breadcrumb_link_color": "#ded3d3",
-    "ds_breadcrumb_link_active_color": "#ffffff"
-  },
+
   "chart_theme": {
     "trending_items": "air",
     "trending_searches": "air",
@@ -27,10 +26,11 @@
     "item_page_analytics": "air"
   },
   "map_theme":{
-    "global_map_theme": ["#a1bdf4", "#5273b5", "#425d94", "#06296f"]
+    "global_map_theme": ["#6d96bd", "#466f97", "#395f84", "#1f3f5e"]
   },
   "feature_config":{
     "allowCommenting":true,
-    "allowRating": true
+    "allowRating": true,
+    "showRepositoryLogo":false
   }
 }

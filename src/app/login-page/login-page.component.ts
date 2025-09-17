@@ -30,6 +30,7 @@ import {
 } from '../shared/empty.util';
 import { ThemedLogInComponent } from '../shared/log-in/themed-log-in.component';
 import { AppImageConfigService } from '../shared/app-image-config.service';
+import { FeatureConfigService } from '../shared/feature-config.service';
 
 /**
  * This component represents the login page
@@ -52,6 +53,7 @@ export class LoginPageComponent implements OnDestroy, OnInit {
    */
   sub: Subscription;
   logoPath: string;
+  showRepositoryLogo: boolean = true;
   /**
    * Initialize instance variables
    *
@@ -60,9 +62,11 @@ export class LoginPageComponent implements OnDestroy, OnInit {
    */
   constructor(private route: ActivatedRoute,
               private store: Store<AppState>,
-              private imageservice: AppImageConfigService
+              private imageservice: AppImageConfigService,
+              private featureConfigService:FeatureConfigService
             ) {
               this.imageservice.load();
+              this.featureConfigService.load();
             }
 
   /**
@@ -70,7 +74,11 @@ export class LoginPageComponent implements OnDestroy, OnInit {
    */
   ngOnInit() {
     const queryParamsObs = this.route.queryParams;
-    this.logoPath = this.imageservice.logo;
+    this.logoPath = this.imageservice.login;
+    this.showRepositoryLogo = this.featureConfigService?.showRepositoryLogo;
+    let repositoryLogo = document.getElementById("repository-logo") as HTMLElement;
+    repositoryLogo.style.width = this.imageservice?.imageSizes?.login?.width;
+    repositoryLogo.style.height = this.imageservice?.imageSizes?.login?.height;
     const authenticated = this.store.select(isAuthenticated);
     this.sub = observableCombineLatest(queryParamsObs, authenticated).pipe(
       filter(([params, auth]) => isNotEmpty(params.token) || isNotEmpty(params.expired)),
