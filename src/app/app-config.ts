@@ -7,5 +7,5 @@ export const defaultitemcardImage = {
 };
 
 export const defaultCommunityImage = {
-  defaultthumbnailForCommunity: 'assets/images/defulticon.png'
+  defaultthumbnailForCommunity: 'assets/images/community-thumbnail.png'
 };
