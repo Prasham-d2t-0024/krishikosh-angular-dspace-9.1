@@ -101,3 +101,67 @@ new layout css blow
 .example-sidenav {
   padding: 20px;
 }
+
+/* Chat to Doc - Embedding Styles */
+.chat-to-doc-container {
+  min-height: 200px;
+}
+
+.current-file-info {
+  padding: 10px;
+  background-color: #f8f9fa;
+  border-radius: 4px;
+  border-left: 3px solid #207698;
+}
+
+.embed-btn {
+  padding: 12px 20px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  
+  &:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  }
+  
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+}
+
+.embedding-progress {
+  padding: 15px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+}
+
+.embedding-success,
+.embedding-failed {
+  .alert {
+    display: flex;
+    align-items: center;
+  }
+}
+
+.progress {
+  border-radius: 10px;
+  overflow: hidden;
+  
+  .progress-bar {
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+}
+
+.start-chat-btn {
+  padding: 12px 20px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+  }
+}

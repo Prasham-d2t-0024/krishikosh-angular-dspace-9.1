@@ -39,6 +39,107 @@
 
           </li>
 
+          <!-- Tab 3: Chat to Doc -->
+          <li [ngbNavItem]="3" style="height: 100%;">
+            <a ngbNavLink>Chat to Doc</a>
+            <ng-template ngbNavContent>
+              <div class="chat-to-doc-container p-3">
+                <!-- Current file info -->
+                @if (currentFileViewing) {
+                  <div class="current-file-info mb-3">
+                    <small class="text-muted">Selected Document:</small>
+                    <p class="mb-0 fw-bold text-truncate" title="{{ currentFileViewing }}">{{ currentFileViewing }}</p>
+                  </div>
+                } @else {
+                  <div class="alert alert-info mb-3">
+                    <i class="fa fa-info-circle me-2"></i>
+                    Please select a document from the "List of Files" tab first.
+                  </div>
+                }
+
+                <!-- Embed Button - Initial State -->
+                @if (!isEmbedding && !embeddingCompleted && !embeddingFailed) {
+                  <button 
+                    class="btn btn-primary w-100 embed-btn"
+                    (click)="embedDocument()"
+                    [disabled]="!currentFileViewing && !bistremobj">
+                    <i class="fa fa-cloud-upload me-2"></i>
+                    Embed the Document
+                  </button>
+                }
+
+                <!-- Progress State -->
+                @if (isEmbedding) {
+                  <div class="embedding-progress">
+                    <div class="d-flex align-items-center mb-2">
+                      <div class="spinner-border spinner-border-sm text-primary me-2" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                      </div>
+                      <span class="text-muted">Embedding in progress...</span>
+                    </div>
+                    <div class="progress mb-2" style="height: 20px;">
+                      <div 
+                        class="progress-bar progress-bar-striped progress-bar-animated" 
+                        role="progressbar" 
+                        [style.width.%]="embeddingProgress"
+                        [attr.aria-valuenow]="embeddingProgress" 
+                        aria-valuemin="0" 
+                        aria-valuemax="100">
+                        {{ embeddingProgress }}%
+                      </div>
+                    </div>
+                    <small class="text-muted">
+                      Status: <span class="text-capitalize">{{ embeddingStatus }}</span>
+                    </small>
+                  </div>
+                }
+
+                <!-- Success State -->
+                @if (embeddingCompleted) {
+                  <div class="embedding-success">
+                    <div class="alert alert-success mb-3">
+                      <i class="fa fa-check-circle me-2"></i>
+                      Document embedded successfully!
+                    </div>
+                    
+                    <!-- Start Chatting Button - Only visible on success -->
+                    @if (isReadyForChat) {
+                      <button 
+                        class="btn btn-success w-100 mb-2 start-chat-btn"
+                        (click)="startChatting()">
+                        <i class="fa fa-comments me-2"></i>
+                        Start Chatting
+                      </button>
+                    }
+                    
+                    <button 
+                      class="btn btn-outline-primary w-100"
+                      (click)="resetEmbeddingState()">
+                      <i class="fa fa-refresh me-2"></i>
+                      Re-embed Document
+                    </button>
+                  </div>
+                }
+
+                <!-- Failed State -->
+                @if (embeddingFailed) {
+                  <div class="embedding-failed">
+                    <div class="alert alert-danger mb-3">
+                      <i class="fa fa-exclamation-circle me-2"></i>
+                      Document embedding failed. Please try again.
+                    </div>
+                    <button 
+                      class="btn btn-danger w-100"
+                      (click)="retryEmbedding()">
+                      <i class="fa fa-repeat me-2"></i>
+                      Retry Embedding
+                    </button>
+                  </div>
+                }
+              </div>
+            </ng-template>
+          </li>
+
         </ul>
 
         <div [ngbNavOutlet]="nav" class="bg-white p-2"></div>

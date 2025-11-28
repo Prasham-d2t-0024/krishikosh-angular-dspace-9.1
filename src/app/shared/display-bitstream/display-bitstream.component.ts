@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, OnInit, OnDestroy, ChangeDetectorRef, ViewChild, Input, Inject, PLATFORM_ID } from '@angular/core';
-import { filter, map, switchMap, take, tap } from 'rxjs/operators';
+import { filter, map, switchMap, take, tap, timeout, catchError } from 'rxjs/operators';
 import { trigger, transition, animate, style } from "@angular/animations";
 import { ActivatedRoute, Router, Data, RouterModule } from '@angular/router';
 import { hasValue, isNotEmpty } from '../empty.util';
@@ -8,7 +8,8 @@ import { Bitstream } from '../../core/shared/bitstream.model';
 import { AuthorizationDataService } from '../../core/data/feature-authorization/authorization-data.service';
 import { FeatureID } from '../../core/data/feature-authorization/feature-id';
 import { AuthService } from '../../core/auth/auth.service';
-import { BehaviorSubject, combineLatest as observableCombineLatest, Observable, of as observableOf } from 'rxjs';
+import { BehaviorSubject, combineLatest as observableCombineLatest, Observable, of as observableOf, throwError } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
 import { FileService } from '../../core/shared/file.service';
 import { HardRedirectService } from '../../core/services/hard-redirect.service';
 import { getForbiddenRoute } from '../../app-routing-paths';
@@ -104,6 +105,18 @@ export class DisplayBitstreamComponent implements OnInit, AfterViewInit {
   currentFileViewing:string;
   pdfUrl:any;
   ITEM_PAGE_LINKS_TO_FOLLOW = getItemPageLinksToFollow();
+  
+  // Chat to Doc - Embedding state
+  currentViewingBitstream: Bitstream;
+  isEmbedding: boolean = false;
+  embeddingProgress: number = 0;
+  embeddingStatus: string = '';
+  embeddingCompleted: boolean = false;
+  embeddingFailed: boolean = false;
+  isReadyForChat: boolean = false;
+  
+  // Configurable timeout for status API (in milliseconds)
+  private readonly STATUS_API_TIMEOUT = 60000; // 60 seconds
   constructor(
     private route: ActivatedRoute,
     protected router: Router,
@@ -119,7 +132,8 @@ export class DisplayBitstreamComponent implements OnInit, AfterViewInit {
     private auth: AuthService,
     private cdRef: ChangeDetectorRef,
     protected paginationService: PaginationService,
-    @Inject(APP_CONFIG) protected appConfig: AppConfig
+    @Inject(APP_CONFIG) protected appConfig: AppConfig,
+    private http: HttpClient
   ) {
     
   }
@@ -187,10 +201,13 @@ export class DisplayBitstreamComponent implements OnInit, AfterViewInit {
   printFile:any;
   showpdf(event:any) {
     this.currentFileViewing = this.dsoNameService.getName(event);
+    // Reset embedding state when switching files
+    this.resetEmbeddingState();
     this.bitstreamDataService.findById(event.id).pipe(
       getFirstSucceededRemoteData(),
       getRemoteDataPayload(),
     ).subscribe((response: Bitstream) => {
+      this.currentViewingBitstream = response;
       this.authorizationService.isAuthorized(FeatureID.CanDownload, isNotEmpty(response) ? response.self : undefined)
       this.auth.getShortlivedToken().pipe(take(1), map((token) =>
         hasValue(token) ? new URLCombiner(response._links.content.href, `?authentication-token=${token}`).toString() : response._links.content.href)).subscribe((logs: string) => {
@@ -291,6 +308,182 @@ export class DisplayBitstreamComponent implements OnInit, AfterViewInit {
           });
       });
     });
+  }
+
+  /**
+   * Get the REST API base URL
+   */
+  private getRestBaseUrl(): string {
+    const rest = this.appConfig.rest;
+    return `${rest.baseUrl}/api`;
+  }
+
+  /**
+   * Reset embedding state
+   */
+  resetEmbeddingState(): void {
+    this.isEmbedding = false;
+    this.embeddingProgress = 0;
+    this.embeddingStatus = '';
+    this.embeddingCompleted = false;
+    this.embeddingFailed = false;
+    this.isReadyForChat = false;
+  }
+
+  /**
+   * Embed the currently viewing document
+   */
+  embedDocument(): void {
+    if (!this.currentViewingBitstream && !this.bistremobj) {
+      this.notificationsService.error(
+        this.translateService.instant('display-bitstream.embed.error'),
+        'No document selected for embedding'
+      );
+      return;
+    }
+
+    const bitstream = this.currentViewingBitstream || this.bistremobj;
+    const uuid = bitstream.uuid || bitstream.id;
+    const baseUrl = this.getRestBaseUrl();
+    const embedUrl = `${baseUrl}/aillm/document/upload/${uuid}`;
+
+    this.isEmbedding = true;
+    this.embeddingProgress = 0;
+    this.embeddingStatus = 'pending';
+    this.embeddingCompleted = false;
+    this.embeddingFailed = false;
+
+    // Make POST request to embed the document
+    this.http.post<{ status?: string; message?: string }>(embedUrl, {}).subscribe({
+      next: (response: any) => {
+        // Check if upload response has error status
+        if (response?.status === 'error') {
+          console.error('Upload API returned error:', response);
+          this.isEmbedding = false;
+          this.embeddingFailed = true;
+          this.embeddingStatus = 'error';
+          this.notificationsService.error(
+            this.translateService.instant('display-bitstream.embed.error'),
+            response?.message || 'Document upload failed'
+          );
+          this.cdRef.detectChanges();
+          return; // Don't call status API
+        }
+        // Upload succeeded, now check status with timeout
+        this.checkEmbeddingStatus(uuid);
+      },
+      error: (error) => {
+        console.error('Error embedding document:', error);
+        this.isEmbedding = false;
+        this.embeddingFailed = true;
+        this.embeddingStatus = 'failed';
+        this.notificationsService.error(
+          this.translateService.instant('display-bitstream.embed.error'),
+          error.message || 'Failed to embed document'
+        );
+        this.cdRef.detectChanges();
+      }
+    });
+  }
+
+  /**
+   * Check embedding status with timeout
+   */
+  private checkEmbeddingStatus(uuid: string): void {
+    const baseUrl = this.getRestBaseUrl();
+    const statusUrl = `${baseUrl}/aillm/document/upload/status/${uuid}`;
+
+    this.http.get<{ progress: number; status: string }>(statusUrl).pipe(
+      timeout(this.STATUS_API_TIMEOUT),
+      catchError((error) => {
+        if (error.name === 'TimeoutError') {
+          return throwError(() => new Error('Status check timed out. Please try again.'));
+        }
+        return throwError(() => error);
+      })
+    ).subscribe({
+      next: (response) => {
+        this.embeddingProgress = response.progress;
+        this.embeddingStatus = response.status;
+        this.isEmbedding = false;
+
+        if (response.status === 'completed' || response.status === 'success' || response.progress >= 100) {
+          this.embeddingCompleted = true;
+          this.embeddingProgress = 100;
+          this.isReadyForChat = true;
+          this.notificationsService.success(
+            this.translateService.instant('display-bitstream.embed.success'),
+            'Document embedded successfully'
+          );
+        } else if (response.status === 'failed' || response.status === 'error') {
+          this.embeddingFailed = true;
+          this.isReadyForChat = false;
+          this.notificationsService.error(
+            this.translateService.instant('display-bitstream.embed.error'),
+            'Document embedding failed'
+          );
+        } else {
+          // Status is processing or pending - mark as failed since we're not polling
+          this.embeddingFailed = true;
+          this.isReadyForChat = false;
+          this.embeddingStatus = response.status || 'unknown';
+          this.notificationsService.warning(
+            this.translateService.instant('display-bitstream.embed.warning'),
+            `Embedding status: ${response.status}. Please try again later.`
+          );
+        }
+        this.cdRef.detectChanges();
+      },
+      error: (error) => {
+        console.error('Error fetching embedding status:', error);
+        this.isEmbedding = false;
+        this.embeddingFailed = true;
+        this.isReadyForChat = false;
+        this.embeddingStatus = 'timeout';
+        this.notificationsService.error(
+          this.translateService.instant('display-bitstream.embed.error'),
+          error.message || 'Failed to check embedding status (timeout)'
+        );
+        this.cdRef.detectChanges();
+      }
+    });
+  }
+
+  /**
+   * Retry embedding after failure
+   */
+  retryEmbedding(): void {
+    this.resetEmbeddingState();
+    this.embedDocument();
+  }
+
+  /**
+   * Start chatting with the embedded document
+   */
+  startChatting(): void {
+    if (!this.isReadyForChat) {
+      this.notificationsService.warning(
+        this.translateService.instant('display-bitstream.chat.warning'),
+        'Document must be embedded before chatting'
+      );
+      return;
+    }
+
+    const bitstream = this.currentViewingBitstream || this.bistremobj;
+    const uuid = bitstream?.uuid || bitstream?.id;
+    
+    if (uuid) {
+      // Navigate to chat page or open chat interface
+      // You can customize this based on your chat implementation
+      this.router.navigate(['/chat'], { queryParams: { documentId: uuid } });
+    }
+  }
+
+  /**
+   * Cleanup on component destroy
+   */
+  ngOnDestroy(): void {
+    // No cleanup needed since we removed polling
   }
   
 }
