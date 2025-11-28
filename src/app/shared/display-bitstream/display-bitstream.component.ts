@@ -27,6 +27,7 @@ import { PaginatedList } from '../../core/data/paginated-list.model';
 import { NotificationsService } from '../../shared/notifications/notifications.service';
 import { TranslateService } from '@ngx-translate/core';
 import { CommonModule, DOCUMENT, isPlatformBrowser } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { NgbNavChangeEvent, NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
 import { DSONameService } from 'src/app/core/breadcrumbs/dso-name.service';
 import { URLCombiner } from 'src/app/core/url-combiner/url-combiner';
@@ -47,6 +48,7 @@ import { PdfJsViewerModule } from 'ng2-pdfjs-viewer';
   imports:[
     ShowItemMetadataComponent,
     CommonModule,
+    FormsModule,
     TruncatablePartComponent,
     TruncatableComponent,
     RouterModule,
@@ -115,6 +117,12 @@ export class DisplayBitstreamComponent implements OnInit, AfterViewInit {
   embeddingFailed: boolean = false;
   isReadyForChat: boolean = false;
   
+  // Chat state
+  isChatActive: boolean = false;
+  chatMessages: Array<{ text: string; isUser: boolean; timestamp: Date }> = [];
+  currentMessage: string = '';
+  isSendingMessage: boolean = false;
+  
   // Configurable timeout for status API (in milliseconds)
   private readonly STATUS_API_TIMEOUT = 60000; // 60 seconds
   constructor(
@@ -149,6 +157,7 @@ export class DisplayBitstreamComponent implements OnInit, AfterViewInit {
         })
         .catch(err => console.error('Fetch error:', err));
       this.bistremobj = data.bitstream.payload;
+      this.currentFileViewing = this.dsoNameService.getName(this.bistremobj);
       this.pdfViewer.pdfSrc = this.bistremobj._links.content.href + '?isDownload=true'; // pdfSrc can be Blob or Uint8Array
         this.pdfViewer.refresh(); 
       // Ask pdf viewer to load/refresh pdf
@@ -328,6 +337,11 @@ export class DisplayBitstreamComponent implements OnInit, AfterViewInit {
     this.embeddingCompleted = false;
     this.embeddingFailed = false;
     this.isReadyForChat = false;
+    // Also reset chat state
+    this.isChatActive = false;
+    this.chatMessages = [];
+    this.currentMessage = '';
+    this.isSendingMessage = false;
   }
 
   /**
@@ -353,41 +367,79 @@ export class DisplayBitstreamComponent implements OnInit, AfterViewInit {
     this.embeddingCompleted = false;
     this.embeddingFailed = false;
 
-    // Make POST request to embed the document
-    this.http.post<{ status?: string; message?: string }>(embedUrl, {}).subscribe({
-      next: (response: any) => {
-        // Check if upload response has error status
-        if (response?.status === 'error') {
-          console.error('Upload API returned error:', response);
-          this.isEmbedding = false;
-          this.embeddingFailed = true;
-          this.embeddingStatus = 'error';
-          this.notificationsService.error(
-            this.translateService.instant('display-bitstream.embed.error'),
-            response?.message || 'Document upload failed'
-          );
-          this.cdRef.detectChanges();
-          return; // Don't call status API
-        }
-        // Upload succeeded, now check status with timeout
-        this.checkEmbeddingStatus(uuid);
-      },
-      error: (error) => {
-        console.error('Error embedding document:', error);
+    // ============================================================
+    // TESTING MODE: Bypass API call for positive flow testing
+    // TODO: Uncomment the real API call below and remove this mock section
+    // ============================================================
+    console.log('[TEST MODE] Bypassing embed API call. URL would be:', embedUrl);
+    // Simulate successful upload response after 1 second
+    setTimeout(() => {
+      this.embeddingStatus = 'processing';
+      this.embeddingProgress = 50;
+      this.cdRef.detectChanges();
+      
+      // Simulate status check success after another 1 second
+      setTimeout(() => {
         this.isEmbedding = false;
-        this.embeddingFailed = true;
-        this.embeddingStatus = 'failed';
-        this.notificationsService.error(
-          this.translateService.instant('display-bitstream.embed.error'),
-          error.message || 'Failed to embed document'
+        this.embeddingCompleted = true;
+        this.embeddingProgress = 100;
+        this.embeddingStatus = 'completed';
+        this.isReadyForChat = true;
+        this.notificationsService.success(
+          this.translateService.instant('display-bitstream.embed.success'),
+          'Document embedded successfully'
         );
         this.cdRef.detectChanges();
-      }
-    });
+      }, 1000);
+    }, 1000);
+    return; // Exit early, skip real API call
+    // ============================================================
+    // END TESTING MODE
+    // ============================================================
+
+    // ============================================================
+    // REAL API CALL - Uncomment this section for real API call
+    // ============================================================
+    // // Make POST request to embed the document
+    // this.http.post<{ status?: string; message?: string }>(embedUrl, {}).subscribe({
+    //   next: (response: any) => {
+    //     // Check if upload response has error status
+    //     if (response?.status === 'error') {
+    //       console.error('Upload API returned error:', response);
+    //       this.isEmbedding = false;
+    //       this.embeddingFailed = true;
+    //       this.embeddingStatus = 'error';
+    //       this.notificationsService.error(
+    //         this.translateService.instant('display-bitstream.embed.error'),
+    //         response?.message || 'Document upload failed'
+    //       );
+    //       this.cdRef.detectChanges();
+    //       return; // Don't call status API
+    //     }
+    //     // Upload succeeded, now check status with timeout
+    //     this.checkEmbeddingStatus(uuid);
+    //   },
+    //   error: (error) => {
+    //     console.error('Error embedding document:', error);
+    //     this.isEmbedding = false;
+    //     this.embeddingFailed = true;
+    //     this.embeddingStatus = 'failed';
+    //     this.notificationsService.error(
+    //       this.translateService.instant('display-bitstream.embed.error'),
+    //       error.message || 'Failed to embed document'
+    //     );
+    //     this.cdRef.detectChanges();
+    //   }
+    // });
+    // ============================================================
+    // END REAL API CALL
+    // ============================================================
   }
 
   /**
    * Check embedding status with timeout
+   * NOTE: This method is bypassed during testing mode
+   * Uncomment the real API call in embedDocument() to use this method
    */
   private checkEmbeddingStatus(uuid: string): void {
     const baseUrl = this.getRestBaseUrl();
@@ -469,13 +521,119 @@ export class DisplayBitstreamComponent implements OnInit, AfterViewInit {
       return;
     }
 
+    // Open chat UI within the tab
+    this.isChatActive = true;
+    this.chatMessages = [];
+    this.currentMessage = '';
+    this.cdRef.detectChanges();
+  }
+
+  /**
+   * Close chat and go back to embedding view
+   */
+  closeChat(): void {
+    this.isChatActive = false;
+    this.cdRef.detectChanges();
+  }
+
+  /**
+   * Send a chat message
+   */
+  sendMessage(): void {
+    if (!this.currentMessage.trim() || this.isSendingMessage) {
+      return;
+    }
+
     const bitstream = this.currentViewingBitstream || this.bistremobj;
     const uuid = bitstream?.uuid || bitstream?.id;
     
-    if (uuid) {
-      // Navigate to chat page or open chat interface
-      // You can customize this based on your chat implementation
-      this.router.navigate(['/chat'], { queryParams: { documentId: uuid } });
+    if (!uuid) {
+      this.notificationsService.error(
+        this.translateService.instant('display-bitstream.chat.error'),
+        'No document selected'
+      );
+      return;
+    }
+
+    const userMessage = this.currentMessage.trim();
+    
+    // Add user message to chat
+    this.chatMessages.push({
+      text: userMessage,
+      isUser: true,
+      timestamp: new Date()
+    });
+    
+    this.currentMessage = '';
+    this.isSendingMessage = true;
+    this.cdRef.detectChanges();
+
+    const baseUrl = this.getRestBaseUrl();
+    const chatUrl = `${baseUrl}/aillm/chat/stream/${uuid}`;
+
+    // ============================================================
+    // TESTING MODE: Bypass API call for chat testing
+    // TODO: Uncomment the real API call below and remove this mock section
+    // ============================================================
+    console.log('[TEST MODE] Bypassing chat API call. URL would be:', chatUrl);
+    console.log('[TEST MODE] User message:', userMessage);
+    
+    // Simulate AI response after 1 second
+    setTimeout(() => {
+      this.chatMessages.push({
+        // text: `This is a mock response to: "${userMessage}". The actual API endpoint is: ${chatUrl}`,
+        text: `This is a mock response ...".`,
+        isUser: false,
+        timestamp: new Date()
+      });
+      this.isSendingMessage = false;
+      this.cdRef.detectChanges();
+    }, 1000);
+    return; // Exit early, skip real API call
+    // ============================================================
+    // END TESTING MODE
+    // ============================================================
+
+    // ============================================================
+    // REAL API CALL - Uncomment this section for real API call
+    // ============================================================
+    // this.http.post<{ response: string }>(chatUrl, { message: userMessage }).subscribe({
+    //   next: (response) => {
+    //     this.chatMessages.push({
+    //       text: response.response || 'No response received',
+    //       isUser: false,
+    //       timestamp: new Date()
+    //     });
+    //     this.isSendingMessage = false;
+    //     this.cdRef.detectChanges();
+    //   },
+    //   error: (error) => {
+    //     console.error('Error sending chat message:', error);
+    //     this.chatMessages.push({
+    //       text: 'Sorry, there was an error processing your message. Please try again.',
+    //       isUser: false,
+    //       timestamp: new Date()
+    //     });
+    //     this.isSendingMessage = false;
+    //     this.notificationsService.error(
+    //       this.translateService.instant('display-bitstream.chat.error'),
+    //       error.message || 'Failed to send message'
+    //     );
+    //     this.cdRef.detectChanges();
+    //   }
+    // });
+    // ============================================================
+    // END REAL API CALL
+    // ============================================================
+  }
+
+  /**
+   * Handle Enter key press in chat input
+   */
+  onChatKeyPress(event: KeyboardEvent): void {
+    if (event.key === 'Enter' && !event.shiftKey) {
+      event.preventDefault();
+      this.sendMessage();
     }
   }
 

@@ -3,7 +3,7 @@
 
     <!-- Left Sidebar -->
     @if (leftOpen) {
-      <div class="col-3" [@slideInOut]>
+      <div class="col-4" [@slideInOut]>
         <ul ngbNav #nav="ngbNav" (navChange)="onNavChange($event)" [(activeId)]="active" class="nav-tabs">
           
           <!-- Tab 1: Properties -->
@@ -17,123 +17,193 @@
           <!-- Tab 2: List of Files -->
           <li [ngbNavItem]="2" style="height: 100%;">
             <a ngbNavLink>List of Files</a>
-          <ng-template ngbNavContent>
-            @if ((originals$ | async)?.payload) {
-            @let originals = (originals$ | async)?.payload;
-            <div style="height: 78vh;">
-              @for (file of originals?.page; track file; let i = $index) {
-              <div class="">
-                <div class="col-12 d-flex" style="justify-content: space-between;">
-                  <a style="cursor: pointer;" (click)="showpdf(file)" target="_blank">
-                    <span class="slash text-black">{{ i + 1 }}. {{ dsoNameService.getName(file) }}</span>
-                  </a>
-                  <a style="cursor: pointer;" (click)="downloadPdf(file)" title="Download File">
-                    <i class="fa fa-download text-primary" aria-hidden="true"></i>
-                  </a>
+            <ng-template ngbNavContent>
+              @if ((originals$ | async)?.payload) {
+              @let originals = (originals$ | async)?.payload;
+              <div style="height: 78vh;">
+                @for (file of originals?.page; track file; let i = $index) {
+                <div class="">
+                  <div class="col-12 d-flex" style="justify-content: space-between;">
+                    <a style="cursor: pointer;" (click)="showpdf(file)" target="_blank">
+                      <span class="slash text-black">{{ i + 1 }}. {{ dsoNameService.getName(file) }}</span>
+                    </a>
+                    <a style="cursor: pointer;" (click)="downloadPdf(file)" title="Download File">
+                      <i class="fa fa-download text-primary" aria-hidden="true"></i>
+                    </a>
+                  </div>
                 </div>
+                }
               </div>
               }
-            </div>
-            }
-          </ng-template>
-
+            </ng-template>
           </li>
 
           <!-- Tab 3: Chat to Doc -->
           <li [ngbNavItem]="3" style="height: 100%;">
             <a ngbNavLink>Chat to Doc</a>
             <ng-template ngbNavContent>
-              <div class="chat-to-doc-container p-3">
-                <!-- Current file info -->
-                @if (currentFileViewing) {
-                  <div class="current-file-info mb-3">
-                    <small class="text-muted">Selected Document:</small>
-                    <p class="mb-0 fw-bold text-truncate" title="{{ currentFileViewing }}">{{ currentFileViewing }}</p>
+              <div class="chat-to-doc-container" style="height: 78vh;">
+                <!-- Chat UI - Shows when chat is active -->
+                @if (isChatActive) {
+                  <div class="chat-container">
+                    <!-- Chat Header -->
+                    <div class="chat-header">
+                      <div class="d-flex align-items-center">
+                        <i class="fa fa-comments text-primary me-2"></i>
+                        <span class="fw-bold">Chat with Document</span>
+                      </div>
+                      <button 
+                        class="btn btn-sm btn-outline-secondary" 
+                        (click)="closeChat()"
+                        title="Close Chat">
+                        <i class="fa fa-times"></i>
+                      </button>
+                    </div>
+                    
+                    <!-- Chat Messages Area -->
+                    <div class="chat-messages">
+                      @if (chatMessages.length === 0) {
+                        <div class="chat-empty-state">
+                          <i class="fa fa-comments fa-3x text-secondary mb-3"></i>
+                          <p class="text-muted">Start a conversation about your document</p>
+                        </div>
+                      }
+                      
+                      @for (message of chatMessages; track message.timestamp) {
+                        <div class="chat-message" [class.user-message]="message.isUser" [class.ai-message]="!message.isUser">
+                          <div class="message-bubble">
+                            <p class="message-text mb-0">{{ message.text }}</p>
+                            <small class="message-time">
+                              {{ message.timestamp | date:'shortTime' }}
+                            </small>
+                          </div>
+                        </div>
+                      }
+                      
+                      <!-- Typing indicator -->
+                      @if (isSendingMessage) {
+                        <div class="chat-message ai-message">
+                          <div class="message-bubble typing-indicator">
+                            <span class="dot"></span>
+                            <span class="dot"></span>
+                            <span class="dot"></span>
+                          </div>
+                        </div>
+                      }
+                    </div>
+                    
+                    <!-- Chat Input Area -->
+                    <div class="chat-input-area">
+                      <div class="input-group">
+                        <input 
+                          type="text" 
+                          class="form-control" 
+                          placeholder="Type your message..."
+                          [(ngModel)]="currentMessage"
+                          (keypress)="onChatKeyPress($event)"
+                          [disabled]="isSendingMessage">
+                        <button 
+                          class="btn btn-primary" 
+                          type="button"
+                          (click)="sendMessage()"
+                          [disabled]="!currentMessage.trim() || isSendingMessage">
+                          @if (isSendingMessage) {
+                            <span class="spinner-border spinner-border-sm" role="status"></span>
+                          } @else {
+                            <i class="fa fa-paper-plane"></i>
+                          }
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 } @else {
-                  <div class="alert alert-info mb-3">
-                    <i class="fa fa-info-circle me-2"></i>
-                    Please select a document from the "List of Files" tab first.
-                  </div>
-                }
-
-                <!-- Embed Button - Initial State -->
-                @if (!isEmbedding && !embeddingCompleted && !embeddingFailed) {
-                  <button 
-                    class="btn btn-primary w-100 embed-btn"
-                    (click)="embedDocument()"
-                    [disabled]="!currentFileViewing && !bistremobj">
-                    <i class="fa fa-cloud-upload me-2"></i>
-                    Embed the Document
-                  </button>
-                }
-
-                <!-- Progress State -->
-                @if (isEmbedding) {
-                  <div class="embedding-progress">
-                    <div class="d-flex align-items-center mb-2">
-                      <div class="spinner-border spinner-border-sm text-primary me-2" role="status">
-                        <span class="visually-hidden">Loading...</span>
+                  <!-- Original Embedding UI - Shows when chat is not active -->
+                  <div class="p-3">
+                    <!-- Current file info -->
+                    @if (currentFileViewing) {
+                      <div class="current-file-info mb-3">
+                        <small class="text-muted">Selected Document:</small>
+                        <p class="mb-0 fw-bold text-truncate" title="{{ currentFileViewing }}">{{ currentFileViewing }}</p>
                       </div>
-                      <span class="text-muted">Embedding in progress...</span>
-                    </div>
-                    <div class="progress mb-2" style="height: 20px;">
-                      <div 
-                        class="progress-bar progress-bar-striped progress-bar-animated" 
-                        role="progressbar" 
-                        [style.width.%]="embeddingProgress"
-                        [attr.aria-valuenow]="embeddingProgress" 
-                        aria-valuemin="0" 
-                        aria-valuemax="100">
-                        {{ embeddingProgress }}%
+                    } @else {
+                      <div class="alert alert-info mb-3">
+                        <i class="fa fa-info-circle me-2"></i>
+                        Please select a document from the "List of Files" tab first.
                       </div>
-                    </div>
-                    <small class="text-muted">
-                      Status: <span class="text-capitalize">{{ embeddingStatus }}</span>
-                    </small>
-                  </div>
-                }
+                    }
 
-                <!-- Success State -->
-                @if (embeddingCompleted) {
-                  <div class="embedding-success">
-                    <div class="alert alert-success mb-3">
-                      <i class="fa fa-check-circle me-2"></i>
-                      Document embedded successfully!
-                    </div>
-                    
-                    <!-- Start Chatting Button - Only visible on success -->
-                    @if (isReadyForChat) {
+                    <!-- Embed Button - Initial State -->
+                    @if (!isEmbedding && !embeddingCompleted && !embeddingFailed) {
                       <button 
-                        class="btn btn-success w-100 mb-2 start-chat-btn"
-                        (click)="startChatting()">
-                        <i class="fa fa-comments me-2"></i>
-                        Start Chatting
+                        class="btn btn-primary w-100 embed-btn"
+                        (click)="embedDocument()"
+                        [disabled]="!currentFileViewing && !bistremobj">
+                        <i class="fa fa-cloud-upload me-2"></i>
+                        Embed the Document
                       </button>
                     }
-                    
-                    <button 
-                      class="btn btn-outline-primary w-100"
-                      (click)="resetEmbeddingState()">
-                      <i class="fa fa-refresh me-2"></i>
-                      Re-embed Document
-                    </button>
-                  </div>
-                }
 
-                <!-- Failed State -->
-                @if (embeddingFailed) {
-                  <div class="embedding-failed">
-                    <div class="alert alert-danger mb-3">
-                      <i class="fa fa-exclamation-circle me-2"></i>
-                      Document embedding failed. Please try again.
-                    </div>
-                    <button 
-                      class="btn btn-danger w-100"
-                      (click)="retryEmbedding()">
-                      <i class="fa fa-repeat me-2"></i>
-                      Retry Embedding
-                    </button>
+                    <!-- Progress State -->
+                    @if (isEmbedding) {
+                      <div class="embedding-progress">
+                        <div class="d-flex align-items-center mb-2">
+                          <div class="spinner-border spinner-border-sm text-primary me-2" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                          </div>
+                          <span class="text-muted">Embedding in progress...</span>
+                        </div>
+                        <div class="progress mb-2" style="height: 20px;">
+                          <div 
+                            class="progress-bar progress-bar-striped progress-bar-animated" 
+                            role="progressbar" 
+                            [style.width.%]="embeddingProgress"
+                            [attr.aria-valuenow]="embeddingProgress" 
+                            aria-valuemin="0" 
+                            aria-valuemax="100">
+                            {{ embeddingProgress }}%
+                          </div>
+                        </div>
+                        <small class="text-muted">
+                          Status: <span class="text-capitalize">{{ embeddingStatus }}</span>
+                        </small>
+                      </div>
+                    }
+
+                    <!-- Success State -->
+                    @if (embeddingCompleted) {
+                      <div class="embedding-success">
+                        <div class="alert alert-success mb-3">
+                          <i class="fa fa-check-circle me-2"></i>
+                          Document embedded successfully!
+                        </div>
+                        
+                        <!-- Start Chatting Button - Only visible on success -->
+                        @if (isReadyForChat) {
+                          <button 
+                            class="btn btn-primary w-100 mb-2 start-chat-btn"
+                            (click)="startChatting()">
+                            <i class="fa fa-comments me-2"></i>
+                            Start Chatting
+                          </button>
+                        }
+                      </div>
+                    }
+
+                    <!-- Failed State -->
+                    @if (embeddingFailed) {
+                      <div class="embedding-failed">
+                        <div class="alert alert-danger mb-3">
+                          <i class="fa fa-exclamation-circle me-2"></i>
+                          Document embedding failed. Please try again.
+                        </div>
+                        <button 
+                          class="btn btn-primary w-100"
+                          (click)="retryEmbedding()">
+                          <i class="fa fa-repeat me-2"></i>
+                          Retry Embedding
+                        </button>
+                      </div>
+                    }
                   </div>
                 }
               </div>
@@ -153,7 +223,7 @@
     }
 
     <!-- Right Content -->
-    <div class="mb-2" [ngClass]="{'col-9': leftOpen,'col-12': !leftOpen}">
+    <div class="mb-2" [ngClass]="{'col-8': leftOpen,'col-12': !leftOpen}">
       @if (!leftOpen) {
         <img (click)="fullleftC()" class="leftFull cursor" src="assets/dsquareIcon/rightFull.png" alt="" />
       }

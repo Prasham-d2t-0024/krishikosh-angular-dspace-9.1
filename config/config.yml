@@ -73,7 +73,7 @@ ssr:
 # 'synced' with the 'dspace.server.url' setting in your backend's local.cfg.
 rest:
   ssl: true
-  host: lab.d2t.co
+  host: ai.d2t.co:8181
   port: 443
   # NOTE: Space is capitalized because 'namespace' is a reserved string in TypeScript
   nameSpace: /server9
