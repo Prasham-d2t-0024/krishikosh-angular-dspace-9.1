@@ -168,7 +168,7 @@ new layout css blow
    Chat UI Styles - Primary & Secondary Colors
    ============================================ */
 
-// Using Bootstrap primary (#0d6efd) and secondary (#6c757d) colors for consistency
+// Using Bootstrap primary (var(--ds-primary-color)) and secondary (#6c757d) colors for consistency
 
 .chat-container {
   display: flex;
@@ -222,7 +222,7 @@ new layout css blow
     align-self: flex-end;
     
     .message-bubble {
-      background-color: #0d6efd; // Primary color
+      background-color: var(--ds-primary-color); // Primary color
       color: #fff;
       border-radius: 18px 18px 4px 18px;
       
@@ -319,7 +319,7 @@ new layout css blow
       border-color: #dee2e6;
       
       &:focus {
-        border-color: #0d6efd; // Primary color
+        border-color: var(--ds-primary-color); // Primary color
         box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.15);
       }
       
@@ -362,4 +362,292 @@ new layout css blow
 
 .body{
   margin-bottom: 0 !important;
+}
+
+//  File List Item Styles
+.file-item {
+  transition: background-color 0.2s ease;
+  
+  &:hover {
+    background-color: #f8f9fa;
+  }
+  
+  .btn-sm {
+    padding: 4px 10px;
+    font-size: 0.8rem;
+  }
+}
+
+//  Chat Panel (Right Side) Styles
+.chat-panel-container {
+  .chat-header {
+    background-color: #f8f9fa;
+  }
+  
+  .chat-messages {
+    background-color: #fafafa;
+    
+    &::-webkit-scrollbar {
+      width: 6px;
+    }
+    
+    &::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 3px;
+    }
+    
+    &::-webkit-scrollbar-thumb {
+      background: #6c757d;
+      border-radius: 3px;
+      
+      &:hover {
+        background: #5a6268;
+      }
+    }
+  }
+  
+  .chat-empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+  }
+  
+  // User message - Right side
+  .user-message {
+    .user-bubble {
+      background-color: var(--ds-primary-color);
+      color: #fff;
+      border-radius: 18px 18px 4px 18px;
+      max-width: 80%;
+      
+      .message-text {
+        word-wrap: break-word;
+        white-space: pre-wrap;
+      }
+      
+      .message-time {
+        display: block;
+        font-size: 0.7rem;
+        margin-top: 4px;
+        text-align: right;
+      }
+    }
+  }
+  
+  // AI message - Left side
+  .ai-message {
+    .ai-avatar {
+      width: 32px;
+      height: 32px;
+      background-color: #6c757d;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+    
+    .ai-bubble {
+      background-color: #fff;
+      color: #212529;
+      border: 1px solid #dee2e6;
+      border-radius: 4px 18px 18px 18px;
+      max-width: 80%;
+      
+      .message-text {
+        word-wrap: break-word;
+        white-space: pre-wrap;
+      }
+      
+      .message-time {
+        display: block;
+        font-size: 0.7rem;
+        margin-top: 4px;
+        text-align: right;
+      }
+    }
+    
+    .thinking-bubble {
+      background-color: #f8f9fa;
+      border: 1px solid #dee2e6;
+    }
+  }
+  
+  // Thinking indicator
+  .thinking-indicator {
+    display: flex;
+    align-items: center;
+    color: #6c757d;
+    font-style: italic;
+    
+    .thinking-text {
+      font-size: 0.9rem;
+    }
+    
+    .thinking-dots {
+      display: inline-flex;
+      margin-left: 2px;
+      
+      .dot {
+        animation: thinkingDots 1.4s infinite ease-in-out;
+        font-weight: bold;
+        
+        &:nth-child(1) {
+          animation-delay: 0s;
+        }
+        
+        &:nth-child(2) {
+          animation-delay: 0.2s;
+        }
+        
+        &:nth-child(3) {
+          animation-delay: 0.4s;
+        }
+      }
+    }
+  }
+  
+  @keyframes thinkingDots {
+    0%, 60%, 100% {
+      opacity: 0.3;
+    }
+    30% {
+      opacity: 1;
+    }
+  }
+  
+  .chat-input-area {
+    .form-control {
+      border-radius: 20px 0 0 20px;
+      
+      &:focus {
+        border-color: var(--ds-primary-color);
+        box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.15);
+      }
+    }
+    
+    .btn-primary {
+      border-radius: 0 20px 20px 0;
+    }
+  }
+}
+
+/* Gap utility for older browsers */
+.gap-2 {
+  gap: 0.5rem;
+}
+
+.selected-file-bg {
+  background-color: #e9f7ff;
+}
+.selected-file-bg:hover {
+  background-color: #d5f0ff;
+}
+
+/* ============================================
+   Formatted Response Styles
+   ============================================ */
+
+.formatted-response {
+  font-size: 0.9rem;
+  line-height: 1.6;
+  
+  // Bold text
+  strong {
+    font-weight: 600;
+    color: #212529;
+  }
+  
+  // Italic text
+  em {
+    font-style: italic;
+    color: #495057;
+  }
+  
+  // List styling
+  .chat-list, ul {
+    margin: 8px 0;
+    padding-left: 20px;
+    list-style-type: disc;
+    
+    li {
+      margin-bottom: 4px;
+      line-height: 1.5;
+    }
+  }
+  
+  // Source links in text
+  .source-link {
+    color: var(--ds-primary-color);
+    text-decoration: none;
+    font-weight: 500;
+    cursor: pointer;
+    
+    &:hover {
+      text-decoration: underline;
+      color: #0a58ca;
+    }
+  }
+}
+
+// Streaming cursor animation
+.streaming-cursor {
+  display: inline-block;
+  animation: blink 1s step-end infinite;
+  color: var(--ds-primary-color);
+  font-weight: bold;
+  margin-left: 2px;
+}
+
+@keyframes blink {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
+// Sources section styling
+.sources-section {
+  font-size: 0.85rem;
+  
+  .sources-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+  
+  .source-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    background-color: #e7f1ff;
+    color: var(--ds-primary-color);
+    border-radius: 12px;
+    font-size: 0.75rem;
+    text-decoration: none;
+    border: 1px solid #b6d4fe;
+    transition: all 0.2s ease;
+    
+    &:hover {
+      background-color: var(--ds-primary-color);
+      color: #fff;
+      text-decoration: none;
+    }
+  }
+}
+
+// AI bubble max-width adjustment for formatted content
+.chat-panel-container {
+  .ai-message {
+    max-width: 90%;
+    
+    .ai-bubble {
+      max-width: 100%;
+    }
+  }
 }
